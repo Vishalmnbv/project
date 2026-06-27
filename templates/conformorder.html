@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+<title>eiser - ConfomerOrder</title>
+{% endblock title %}
+{% block body %}
+    <style>
+        .breadcrumb a{
+            transition: all .3s ease;
+        }
+        .breadcrumb a:hover{
+            color: red !important;
+            text-decoration: underline !important;
+        }
+        .breadcrumb-active{
+            cursor: default;
+            transition: all .3s ease;
+        }
+        .breadcrumb-active:hover{
+            color: red !important;
+            text-decoration: underline !important;
+        }
+        .pdf-hide{
+            display:none !important;
+        }
+    </style>
+    <div class="container-fluid p-0">
+        <nav class="navbar navbar-dark bg-dark px-3">
+            <div class="d-flex align-items-center w-100">
+                <a class="navbar-brand fw-bold mb-0" data-bs-toggle="offcanvas" href="#offcanvasMenu" role="button" aria-controls="offcanvasMenu"><i class="fa-solid fa-bars me-2"></i>All</a>
+            </div>
+        </nav>
+    </div>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header bg-dark text-white">
+            <h5 class="offcanvas-title fw-bold" id="offcanvasMenuLabel"><i class="fa-solid fa-circle-user text-warning me-2"></i>
+                {% if user.is_authenticated %} Hello, {{ user.username }} {% else %} Hello, Sign In {% endif %}
+            </h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"> </button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <div class="p-3 border-bottom">
+                {% if user.is_authenticated %}
+                    <div class="d-grid mb-2"><a href="/logout/" class="btn btn-danger rounded-pill fw-bold"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a></div>
+                {% else %}
+                    <div class="d-grid gap-2">
+                        <a href="/login/" class="btn btn-warning rounded-pill fw-bold"> <i class="fa-solid fa-right-to-bracket me-2"></i>Sign In</a>
+                        <a href="/register/"class="btn btn-warning rounded-pill fw-bold"><i class="fa-solid fa-user-plus me-2"></i>Create Account</a>
+                    </div>
+                {% endif %}
+            </div>
+            <ul class="nav flex-column">
+                {% for category in category %}
+                    <li class="nav-item">
+                        <a href="/collection/{{category.categoryid}}"class="nav-link text-dark fw-semibold py-3 border-bottom">
+                            <i class="fa-solid fa-tag me-2 text-danger"></i>{{category.categoryname}}
+                        </a>
+                    </li>
+                {% empty %}
+                    <div class="text-warning ms-3">No categories found</div>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container mt-4 py-3 bg-dark fs-4">
+        <div class="row">
+            <div class="col-12 text-center">
+                <a href="/" class="navbar-brand text-white fw-bold fst-italic d-inline-flex align-items-center mb-0">
+                    <i class="fa-solid fa-bag-shopping me-2 p-2 bg-warning rounded-circle text-dark"></i>
+                    <span>eiser</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="container py-4" id="invoice">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small mb-3">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+                <li class="breadcrumb-item active breadcrumb-active text-secondary">Order Details</li>
+            </ol>
+        </nav>
+        <div class="row g-3">
+            <div class="col-lg-8">
+                <div class="border rounded p-3 mb-3 bg-white">
+                    <h6 class="fw-bold mb-3">Order Information</h6>
+                    <div class="row small text-muted">
+                        <div class="col-md-4 mb-2">
+                            <strong class="text-dark">Order ID</strong><br>{{ amazon_order_id }}
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <strong class="text-dark">Date</strong><br>{{ order.date }}
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <strong class="text-dark">Payment</strong><br>
+                            <span class="text-success fw-semibold">{{ order.paymentmethod }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="border rounded bg-white">
+                    <div class="p-3 border-bottom">
+                        <h6 class="fw-bold mb-0">Items in your order</h6>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead class="table-light small text-muted">
+                                <tr>
+                                    
+                                    <th>Product</th>
+                                    <th>Qty</th>
+                                    <th>Size</th>
+                                    <th>Color</th>
+                                    <th class="text-end">Price</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in orderitems %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                {% if i.productview_id.productimage1 %}
+                                                    <img src="{{ i.productview_id.productimage1 }}"class="" style="width:60px;height:60px;object-fit:contain;">
+                                                {% else %}
+                                                    <div class="bg-light border rounded d-flex align-items-center justify-content-center" style="width:60px;height:60px;">
+                                                        <small>No Image</small>
+                                                    </div>
+                                                {% endif %}
+                                                <div>
+                                                    <div class="fw-semibold">{{ i.productview_id.producttitle }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-muted">{{ i.quantity }}</td>
+                                        <td class="text-muted">{{ i.productview_id.productsize1 }}</td>
+                                        <td class="text-muted">{{ i.productview_id.productcolor1 }}</td>
+                                        <td class="text-end fw-bold">₹{{ i.productview_id.productprice }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="border rounded p-3 bg-white" style="top:20px;">
+                    <h6 class="fw-bold mb-3">Order Summary</h6>
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Subtotal</span>
+                        <span>₹{{ order.subtotal }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Delivery</span>
+                        <span>₹{{ order.deliverycharges }}</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold fs-6">
+                        <span>Total</span>
+                        <span class="text-success">₹{{ order.total }}</span>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <h6 class="fw-bold mb-2">Shipping Address</h6>
+                        <div class="small text-muted">
+                            <div class="fw-semibold text-dark">
+                                {{ order.firstname }} {{ order.username}} {{ order.lastname }}
+                            </div>
+                            <div>
+                                {{ order.address }},
+                                {{ order.city }},
+                                {{ order.state }},
+                                {{ order.country }} - {{ order.pincode }}
+                            </div>
+                            <div class="mt-1">{{ order.number }}</div>
+                        </div>
+                    </div>
+                    <div id="action-buttons">
+                        <a href="#" class="btn btn-danger w-100 mb-2 fw-semibold rounded-pill" onclick="downloadInvoice(event)"><i class="fa-solid fa-file-pdf me-2"></i>Download Bill</a>     
+                        <a href="/myorder/" class="btn btn-warning w-100 mb-2 fw-semibold rounded-pill"><i class="fa-solid fa-box-open me-2"></i>View Your Orders</a>
+                        <a href="/" class="btn btn-primary w-100 fw-semibold rounded-pill"><i class="fa-solid fa-cart-shopping me-2"></i>Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    async function downloadInvoice(e) {
+    e.preventDefault();
+    const buttons = document.getElementById("action-buttons");
+    buttons.style.display = "none";
+    const invoice = document.getElementById("invoice");
+    const canvas = await html2canvas(invoice, {scale: 0.8,useCORS: true});
+    const imgData = canvas.toDataURL("image/png");
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const imgWidth = pageWidth;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+    while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+    }
+    pdf.save("Invoice-{{ order.orderid }}.pdf");
+    buttons.style.display = "block";
+    }
+    </script>
+{% endblock body %}
+
+

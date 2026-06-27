@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+<title>eiser - Customer reviews</title>
+{% endblock title %}
+{% block body %}
+    <style>
+        .breadcrumb a{
+            transition: all .3s ease;
+        }
+        .breadcrumb a:hover{
+            color: red !important;
+            text-decoration: underline !important;
+        }
+        .breadcrumb-active{
+            cursor: default;
+            transition: all .3s ease;
+        }
+        .breadcrumb-active:hover{
+            color: red !important;
+            text-decoration: underline !important;
+        }
+    </style>
+    <div class="container-fluid p-0">
+        <nav class="navbar navbar-dark bg-dark px-3">
+            <div class="d-flex align-items-center w-100">
+                <a class="navbar-brand fw-bold mb-0" data-bs-toggle="offcanvas" href="#offcanvasMenu" role="button" aria-controls="offcanvasMenu"><i class="fa-solid fa-bars me-2"></i>All</a>
+            </div>
+        </nav>
+    </div>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header bg-dark text-white">
+            <h5 class="offcanvas-title fw-bold" id="offcanvasMenuLabel"><i class="fa-solid fa-circle-user text-warning me-2"></i>
+                {% if user.is_authenticated %} Hello, {{ user.username }} {% else %} Hello, Sign In {% endif %}
+            </h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"> </button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <div class="p-3 border-bottom">
+                {% if user.is_authenticated %}
+                    <div class="d-grid mb-2"><a href="/logout/" class="btn btn-danger rounded-pill fw-bold"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a></div>
+                {% else %}
+                    <div class="d-grid gap-2">
+                        <a href="/login/" class="btn btn-warning rounded-pill fw-bold"> <i class="fa-solid fa-right-to-bracket me-2"></i>Sign In</a>
+                        <a href="/register/"class="btn btn-warning rounded-pill fw-bold"><i class="fa-solid fa-user-plus me-2"></i>Create Account</a>
+                    </div>
+                {% endif %}
+            </div>
+            <ul class="nav flex-column">
+                {% for category in category %}
+                    <li class="nav-item">
+                        <a href="/collection/{{category.categoryid}}"class="nav-link text-dark fw-semibold py-3 border-bottom">
+                            <i class="fa-solid fa-tag me-2 text-danger"></i>{{category.categoryname}}
+                        </a>
+                    </li>
+                {% empty %}
+                    <div class="text-warning ms-3">No categories found</div>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container py-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small mb-0">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary fw-bold"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+                <li class="breadcrumb-item text-secondary fw-semibold"><a href="/productview/{{ categories.categoryid}}/{{ productview.productviewid}}" class="text-decoration-none text-secondary"><i class="fa-solid fa-tags me-1"></i>{{productview.producttitle}}</a></li>
+                <li class="breadcrumb-item active breadcrumb-active text-secondary fw-semibold">Customer reviews</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="container">
+        <div class="card border-1 mb-2">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2 col-4 text-center">
+                        {% if productview.productimage1 %}
+                            <img src="{{ productview.productimage1 }}" class="img-fluid rounded" style="height:130px; object-fit:cover;" alt="Product Image">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-10 col-8">
+                        <h6 class="mb-1">{{ productview.producttitle }}</h6>
+                        <small class="text-muted d-block mb-2">By {{ productview.productname }}</small>
+                        <p class="mb-0 text-muted">
+                            <strong>Size:</strong> {{ productview.productsize }} | <strong>Color:</strong> {{ productview.productcolor1 }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-3 fw-bold">Customer reviews</div>
+    <div class="container mt-3">
+        {% for review in reviews %}
+            <div class="card border-1 mb-2">
+                <a href="/profile/{{review.user.id}}" class="text-decoration-none text-dark">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            {% if review.user.profile.image %}
+                                <img src="{{ review.user.profile.image.url }}" class="rounded-circle border me-3" width="50" height="50" style="object-fit:contain;">
+                            {% else %}
+                                <img src="/static/IMG/default.png" class="rounded-circle border me-3" width="50" height="50" style="object-fit:contain;">
+                            {% endif %}
+                            <div>
+                                <h6 class="mb-0">{{ review.user.username }}</h6>
+                                <small class="text-muted">Reviewed in {{ review.country }} {{ review.created_at }}</small><br>
+                                <small class="text-muted">{{ review.user.email }}</small>
+                            </div>
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-md-2 col-4 text-center">
+                                {% if review.image %}
+                                    <img src="{{ review.image.url }}" class="img-fluid rounded" style="height:130px; ">
+                                {% endif %}
+                            </div>
+                            <div class="col-md-10 col-8">
+                                <div class="mb-2 text-warning">
+                                    {% for i in "12345"|make_list %}
+                                        {% if forloop.counter <= review.rating %}
+                                            <i class="fa-solid fa-star"></i>
+                                        {% else %}
+                                            <i class="fa-regular fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <span class="text-dark ms-2">{{ review.rating }}/5</span>
+                                </div>
+                                <p class="text-muted mb-2">
+                                    <strong>Size:</strong> {{ review.size }}
+                                    |
+                                    <strong>Color:</strong> {{ review.color }}
+                                </p>
+                                <p class="mb-0">{{ review.review }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% empty %}
+            <div class="alert alert-info text-center">No reviews found.</div>
+        {% endfor %}
+    </div>
+{% endblock body %}

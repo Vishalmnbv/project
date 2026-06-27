@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+<title>eiser - Cart</title>
+{% endblock title %}
+{% block body %}
+    <style>
+        .breadcrumb a{
+            transition: all .3s ease;
+        }
+        .breadcrumb a:hover{
+            color: red !important;
+            text-decoration: underline !important;
+        }
+        .breadcrumb-active{
+            cursor: default;
+            transition: all .3s ease;
+        }
+        .breadcrumb-active:hover{
+            color: red !important;
+            text-decoration: underline !important;
+        }
+        .card img {
+            transition: transform 0.3s ease;
+        }
+        .card:hover img {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+    </style>
+    <div class="container-fluid p-0">
+        <nav class="navbar navbar-dark bg-dark px-3">
+            <div class="d-flex align-items-center w-100">
+                <a class="navbar-brand fw-bold mb-0" data-bs-toggle="offcanvas" href="#offcanvasMenu" role="button" aria-controls="offcanvasMenu"><i class="fa-solid fa-bars me-2"></i>All</a>
+            </div>
+        </nav>
+    </div>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header bg-dark text-white">
+            <h5 class="offcanvas-title fw-bold" id="offcanvasMenuLabel"><i class="fa-solid fa-circle-user text-warning me-2"></i>
+                {% if user.is_authenticated %} Hello, {{ user.username }} {% else %} Hello, Sign In {% endif %}
+            </h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"> </button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <div class="p-3 border-bottom">
+                {% if user.is_authenticated %}
+                    <div class="d-grid mb-2"><a href="/logout/" class="btn btn-danger rounded-pill fw-bold"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a></div>
+                {% else %}
+                    <div class="d-grid gap-2">
+                        <a href="/login/" class="btn btn-warning rounded-pill fw-bold"> <i class="fa-solid fa-right-to-bracket me-2"></i>Sign In</a>
+                        <a href="/register/"class="btn btn-warning rounded-pill fw-bold"><i class="fa-solid fa-user-plus me-2"></i>Create Account</a>
+                    </div>
+                {% endif %}
+            </div>
+            <ul class="nav flex-column">
+                {% for category in category %}
+                    <li class="nav-item">
+                        <a href="/collection/{{category.categoryid}}"class="nav-link text-dark fw-semibold py-3 border-bottom">
+                            <i class="fa-solid fa-tag me-2 text-danger"></i>{{category.categoryname}}
+                        </a>
+                    </li>
+                {% empty %}
+                    <div class="text-warning ms-3">No categories found</div>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container py-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small mb-0">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary fw-bold"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+                {% if category_name and producttitle %}
+                    <li class="breadcrumb-item"><a href="/collection/{{ category_id }}" class="text-decoration-none text-secondary fw-bold"> <i class="fa-solid fa-tags me-1"></i>{{ category_name }}</a></li>
+                    <li class="breadcrumb-item breadcrumb-active text-secondary fw-semibold text-truncate"  style="max-width: 300px;"><i class="fa-solid fa-box me-1"></i>{{ producttitle }}</li>
+                {% endif %}
+                    <li class="breadcrumb-item active breadcrumb-active text-secondary fw-semibold"><i class="fa-solid fa-cart-shopping me-1"></i>Cart</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <h2 class="fw-bold mb-4">Your Cart</h2>
+                {% for item in cartdata %}
+                    <div class="card shadow border-0 mb-3">
+                        <div class="row g-0 align-items-center">
+                            <div class="col-md-3 text-center p-3">
+                                <img src="{{ item.product_id.productimage1 }}"class="img-fluid rounded" style="max-height:130px; object-fit:contain;" alt="{{ item.product_id.producttitle }}">
+                            </div>
+                            <div class="col-md-9">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h5 class="mb-1">{{ item.product_id.producttitle }}</h5>
+                                            <small class="text-muted d-block">Size: {{ item.product_id.productsize1 }}</small>
+                                            <small class="text-muted d-block">Color: {{ item.product_id.productcolor1 }}</small>
+                                        </div>
+                                        <a href="/remove/{{ item.cartid }}" class="text-danger fs-5 me-2"><i class="fas fa-trash"></i></a>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                        <h4 class="text-primary mb-2 mb-md-0">₹ {{ item.product_id.productprice }}</h4>
+                                        <div class="input-group" style="width:150px;">
+                                            <a href="/minus/{{ item.cartid }}"class="btn btn-secondary">−</a>
+                                            <input type="text" class="form-control text-center shadow-none" value="{{ item.quantity }}"readonly>
+                                            <a href="/plus/{{ item.cartid }}"class="btn btn-secondary">+</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center py-5">
+                            <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+                            <h4>Your Cart is Empty</h4>
+                            <p class="text-muted">Looks like you haven't added anything yet.</p>
+                            <a href="/" class="btn btn-primary rounded-pill px-4">Continue Shopping</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col-lg-5">
+                <div class="card shadow border-0 sticky-top" style="top:20px;">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Order Summary</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Subtotal ({{ cartdata|length }} Items)</span>
+                            <strong>₹ {{ subtotal }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Delivery Charge</span>
+                            <strong>₹ {{ deliverycharge }}</strong>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fs-4 fw-bold mb-4">
+                            <span>Total</span>
+                            <span class="text-success">₹ {{ total }}</span>
+                        </div>
+                        <a href="/checkout/" class="btn btn-warning w-100 py-3 rounded-pill fw-bold">Proceed to Checkout ({{ cartdata|length }} Items)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

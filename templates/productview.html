@@ -1,0 +1,499 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+<title>{{productview.producttitle}}</title>
+{% endblock title %}
+{% block body %}
+    <style>
+        .breadcrumb a{
+            transition: all .3s ease;
+        }
+        .breadcrumb a:hover{
+            color: red !important;
+            text-decoration: underline !important;
+        }
+        .breadcrumb-active{
+            cursor: default;
+            transition: all .3s ease;
+        }
+        .breadcrumb-active:hover{
+            color: red !important;
+            text-decoration: underline !important;
+        }
+        .thumb-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+        .thumb-img:hover {
+            border-color: red !important;
+        }
+        .review-img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+        .variant-slider {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 8px;
+            padding-bottom: 5px;
+            scrollbar-width: none; 
+            -ms-overflow-style: none; 
+        }
+        .variant-slider::-webkit-scrollbar {
+            display: none; 
+        }
+        .variant-slider .col {
+            flex: 0 0 110px; 
+        max-width: 110px;
+        }
+        }
+    </style>
+    <div class="container-fluid p-0">
+        <nav class="navbar navbar-dark bg-dark px-3">
+            <div class="d-flex align-items-center w-100">
+                <a class="navbar-brand fw-bold mb-0" data-bs-toggle="offcanvas" href="#offcanvasMenu" role="button" aria-controls="offcanvasMenu"><i class="fa-solid fa-bars me-2"></i>All</a>
+            </div>
+        </nav>
+    </div>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header bg-dark text-white">
+            <h5 class="offcanvas-title fw-bold" id="offcanvasMenuLabel"><i class="fa-solid fa-circle-user text-warning me-2"></i>
+                {% if user.is_authenticated %} Hello, {{ user.username }} {% else %} Hello, Sign In {% endif %}
+            </h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"> </button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <div class="p-3 border-bottom">
+                {% if user.is_authenticated %}
+                    <div class="d-grid mb-2"><a href="/logout/" class="btn btn-danger rounded-pill fw-bold"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a></div>
+                {% else %}
+                    <div class="d-grid gap-2">
+                        <a href="/login/" class="btn btn-warning rounded-pill fw-bold"> <i class="fa-solid fa-right-to-bracket me-2"></i>Sign In</a>
+                        <a href="/register/"class="btn btn-warning rounded-pill fw-bold"><i class="fa-solid fa-user-plus me-2"></i>Create Account</a>
+                    </div>
+                {% endif %}
+            </div>
+            <ul class="nav flex-column">
+                {% for category in category %}
+                    <li class="nav-item">
+                        <a href="/collection/{{category.categoryid}}"class="nav-link text-dark fw-semibold py-3 border-bottom">
+                            <i class="fa-solid fa-tag me-2 text-danger"></i>{{category.categoryname}}
+                        </a>
+                    </li>
+                {% empty %}
+                    <div class="text-warning ms-3">No categories found</div>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container py-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small mb-0">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary fw-bold"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+                <li class="breadcrumb-item"><a href="/collection/{{categories.categoryid}}" class="text-decoration-none text-secondary fw-bold me-1"><i class="fa-solid fa-tags me-1"></i>{{categories.categoryname}}</a></li>
+                <li class="breadcrumb-item active breadcrumb-active text-secondary fw-semibold text-truncate" style="max-width: 280px;"><i class="fa-solid fa-tags me-1"></i>{{productview.producttitle}}</li>
+            </ol>
+        </nav>
+        <div class="mt-2">
+            <small class="text-muted">
+                <i class="fa-solid fa-eye me-1"></i>
+                {{ view_count }} users viewed this product
+            </small>
+        </div> 
+        <div class="mt-2 d-flex align-items-center gap-3">
+            <a href="{% url 'product_reaction' productview.productviewid 'like' %}"class="text-success text-decoration-none reaction-icon"><i class="fa-regular fa-thumbs-up icon"></i> {{ likes }}</a>
+            <a href="{% url 'product_reaction' productview.productviewid 'dislike' %}"class="text-danger text-decoration-none reaction-icon"><i class="fa-regular fa-thumbs-down icon"></i> {{ dislikes }}</a>
+        </div>
+        <div class="card border-0 rounded-4 overflow-hidden mb-5 bg-white">
+            <div class="row">
+                <div class="col-lg-6 d-flex flex-column py-4">
+                    <div class="rounded-4 d-flex align-items-center justify-content-center mb-3 border p-3" style="min-height: 400px; height: 600px;">
+                        <img src="{{ productview.productimage1 }}" id="mainImage" class="img-fluid" alt="{{ productview.productdescription }}" style="max-height: 100%; object-fit: contain; transition: all 0.3s ease;">
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap gap-2 thumbnail-gallery">
+                        <img src="{{ productview.productimage1 }}" class="rounded border thumb-img p-1 img-thumbnail active-thumb" style="width: 72px; height: 72px; object-fit: contain; cursor: pointer;" alt="{{ productview.productdescription }}" onmouseenter="showMainImage(this.src)" onmouseleave="resetMainImage()">
+                        <img src="{{ productview.productimage2 }}" class="rounded border thumb-img p-1 img-thumbnail" style="width: 72px; height: 72px; object-fit: contain; cursor: pointer;" alt="{{ productview.productdescription }}" onmouseenter="showMainImage(this.src)" onmouseleave="resetMainImage()">
+                        <img src="{{ productview.productimage3 }}" class="rounded border thumb-img p-1 img-thumbnail" style="width: 72px; height: 72px; object-fit: contain; cursor: pointer;" alt="{{ productview.productdescription }}" onmouseenter="showMainImage(this.src)" onmouseleave="resetMainImage()">
+                        <img src="{{ productview.productimage4 }}" class="rounded border thumb-img p-1 img-thumbnail" style="width: 72px; height: 72px; object-fit: contain; cursor: pointer;" alt="{{ productview.productdescription }}" onmouseenter="showMainImage(this.src)" onmouseleave="resetMainImage()">
+                        <img src="{{ productview.productimage5 }}" class="rounded border thumb-img p-1 img-thumbnail" style="width: 72px; height: 72px; object-fit: contain; cursor: pointer;" alt="{{ productview.productdescription }}" onmouseenter="showMainImage(this.src)" onmouseleave="resetMainImage()">
+                    </div>
+                </div>
+                <div class="col-lg-6 p-4 p-md-5 d-flex flex-column justify-content-between h-100">
+                    <div>
+                        <h3 class="fw-bold text-dark lh-base mb-3 fs-4 fs-md-3">{{productview.producttitle}}</h3>
+                        <div class="d-flex align-items-center mb-2 text-warning">
+                            <span class="fw-bold text-dark me-2">{{ productview.rating }}</span>
+                            {% if productview.rating == 5.0 %}
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                {% elif productview.rating == 4.3 or productview.rating == 3.8 or productview.rating == 3.4 %}
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
+                            {% endif %}
+                        </div>
+                        <hr class="text-muted opacity-25">
+                        <div class="mb-4 p-3 bg-light rounded-3 border-4">
+                            <div class="d-flex align-items-center flex-wrap gap-3">
+                                <h2 class="fw-bold text-dark mb-0 fs-2">₹{{ productview.productprice }}.00</h2>
+                                {% if productview.productdiscountrate and productview.productdiscountrate != '0' %}
+                                    <span class="small text-muted text-decoration-line-through">M.R.P: ₹{{ productview.productmrpprice }}.00</span>
+                                    <span class="text-success fw-semibold p-2 ms-1">{{ productview.productdiscountrate }}% OFF</span>
+                                {% endif %}   
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-sm-6">
+                                <div class="p-3 rounded-3 bg-light text-center h-100">
+                                    <small class="text-muted d-block text-uppercase fw-bold mb-1" style="letter-spacing: 0.05em; font-size: 0.65rem;">SIZE AVAILABLE</small>
+                                    <span class="fw-bold text-dark fs-5">{{ productview.productsize1 }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="p-3 rounded-3 bg-light text-center h-100">
+                                    <small class="text-muted d-block text-uppercase fw-bold mb-1" style="letter-spacing: 0.05em; font-size: 0.65rem;">COLOR ASPECT</small>
+                                    <span class="fw-bold text-dark fs-5">{{ productview.productcolor1 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% if page_obj %}
+                            <div class="row row-cols-3 row-cols-sm-4 row-cols-md-5 g-2 mb-3 variant-slider">
+                                {% for item in page_obj %}
+                                    <div class="col">
+                                        <a href="/productview/{{ categories.categoryid }}/{{ item.productviewid }}" class="text-decoration-none text-dark h-100 d-block">
+                                            <div class="h-100 border rounded-3">
+                                                <div class="p-2 text-center rounded-top-3">
+                                                    <img src="{{ item.productimage5 }}" class="img-fluid" style="height: 80px; object-fit: contain; cursor:pointer;" alt="{{ productview.producttitle }}" onmouseenter="showMainImage(this.src)" onmouseleave="resetMainImage()">
+                                                </div>
+                                                <div class="card-body p-2 text-center rounded-bottom-3">
+                                                    <div class="fw-bold text-primary small">₹{{ item.productprice }}.00</div>
+                                                    {% if productview.productdiscountrate and productview.productdiscountrate != '0' %}
+                                                        <small class="text-muted text-decoration-line-through d-block" style="font-size: 0.65rem;">₹{{ item.productmrpprice }}.00</small>
+                                                    {% endif %} 
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% empty %}
+                                    <div class="col-12 text-center w-100">
+                                        <p class="text-muted mb-0 py-2 small">No variants available</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% if page_obj.has_other_pages %}
+                                <nav aria-label="Page navigation" class="mb-4">
+                                    <ul class="pagination pagination-sm justify-content-center align-items-center flex-wrap gap-1">
+                                        {% if page_obj.has_previous %}
+                                            <li class="page-item"><a class="page-link rounded-pill border-1 shadow-none  px-2" href="?page=1"><i class="fa-solid fa-angles-left"></i></a></li>
+                                            <li class="page-item"><a class="page-link rounded-pill border-1 shadow-none  px-2" href="?page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-angle-left"></i></a></li>
+                                        {% endif %}
+                                        {% for num in page_obj.paginator.page_range %}
+                                            {% if num == page_obj.number %}
+                                                <li class="page-item active"><span class="page-link rounded-pill border-1 shadow-none px-2 fw-bold">{{ num }}</span></li>
+                                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                                <li class="page-item"><a class="page-link rounded-pill border-1 shadow-none  px-2" href="?page={{ num }}"> {{ num }}</a></li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if page_obj.has_next %}
+                                            <li class="page-item"><a class="page-link rounded-pill border-1 shadow-none  px-2" href="?page={{ page_obj.next_page_number }}"><i class="fa-solid fa-angle-right"></i> </a></li>
+                                            <li class="page-item"><a class="page-link rounded-pill border-1 shadow-none px-2" href="?page={{ page_obj.paginator.num_pages }}"><i class="fa-solid fa-angles-right"></i></a></li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            {% endif %}
+                        {% endif %}
+                        <div class="accordion accordion-flush mb-4 border-top border-bottom" id="productAccordion">
+                            <div class="accordion-item bg-transparent">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed fw-bold shadow-none px-0 text-dark bg-transparent" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAbout">
+                                        Product Details
+                                    </button>
+                                </h2>
+                                <div id="collapseAbout" class="accordion-collapse collapse" data-bs-parent="#productAccordion">
+                                    <div class="accordion-body px-0 text-secondary">
+                                        <ul class="small mb-0 ps-3">
+                                            <li class="mb-1">{{ productview.producttophighlights1 }}</li>
+                                            <li class="mb-1">{{ productview.producttophighlights2 }}</li>
+                                            <li class="mb-1">{{ productview.producttophighlights3 }}</li>
+                                            <li class="mb-1">{{ productview.producttophighlights4 }}</li>
+                                            <li class="mb-1">{{ productview.producttophighlights5 }}</li>
+                                            <li class="mb-1">{{ productview.producttophighlights6 }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item bg-transparent">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed fw-bold shadow-none px-0 text-dark bg-transparent" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStyle">
+                                        About This Item
+                                    </button>
+                                </h2>
+                                <div id="collapseStyle" class="accordion-collapse collapse" data-bs-parent="#productAccordion">
+                                    <div class="accordion-body px-0 text-secondary">
+                                        <ul class="small mb-0 ps-3">
+                                            <li class="mb-1">{{ productview.productaboutitem1 }}</li>
+                                            <li class="mb-1">{{ productview.productaboutitem2 }}</li>
+                                            <li class="mb-1">{{ productview.productaboutitem3 }}</li>
+                                            <li class="mb-1">{{ productview.productaboutitem4 }}</li>
+                                            <li class="mb-1">{{ productview.productaboutitem5 }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item bg-transparent">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed fw-bold shadow-none px-0 text-dark bg-transparent" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHighlights">
+                                        Top Highlights
+                                    </button>
+                                </h2>
+                                <div id="collapseHighlights" class="accordion-collapse collapse" data-bs-parent="#productAccordion">
+                                    <div class="accordion-body px-0 text-secondary">
+                                        <ul class="small text-muted mb-0 ps-3">
+                                            <li>{{ productview.productitemdetail1 }}</li>
+                                            <li>{{ productview.productitemdetail2 }}</li>
+                                            <li>{{ productview.productitemdetail3 }}</li>
+                                            <li>{{ productview.productitemdetail4 }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid mt-3">
+                        <a href="/addtocart/{{ productview.productviewid }}" class="btn btn-warning btn-lg rounded-pill fw-bold shadow-sm py-3 text-uppercase" style="letter-spacing: 0.05em; transition: transform 0.2s;">
+                            <i class="fa-solid fa-bolt me-2"></i>Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-2 justify-content-center p-4  border-top mx-0">
+                {% if productview.productimage6 %}
+                    <div class="col-12 col-md-10 col-lg-9 text-center">
+                        <img src="{{ productview.productimage6 }}" class="img-fluid p-2 mb-1" style="max-height: 500px; width: 100%; object-fit: contain;" alt="{{ productview.producttitle }}">
+                    </div>
+                {% endif %}
+                {% if productview.productimage7 %}
+                    <div class="col-12 col-md-10 col-lg-9 text-center">
+                        <img src="{{ productview.productimage7 }}" class="img-fluid p-2 mb-1" style="max-height: 500px; width: 100%; object-fit: contain;" alt="{{ productview.producttitle }}">
+                    </div>
+                {% endif %}
+                {% if productview.productimage8 %}
+                    <div class="col-12 col-md-10 col-lg-9 text-center">
+                        <img src="{{ productview.productimage8 }}" class="img-fluid p-2 mb-1" style="max-height: 500px; width: 100%; object-fit: contain;" alt="{{ productview.producttitle }}">
+                    </div>
+                {% endif %}
+                {% if productview.productimage9 %}
+                    <div class="col-12 col-md-10 col-lg-9 text-center">
+                        <img src="{{ productview.productimage9 }}" class="img-fluid p-2 mb-1" style="max-height: 500px; width: 100%; object-fit: contain;" alt="{{ productview.producttitle }}">
+                    </div>
+                {% endif %}
+                {% if productview.productimage10 %}
+                    <div class="col-12 col-md-10 col-lg-9 text-center">
+                        <img src="{{ productview.productimage10 }}" class="img-fluid p-2 mb-1" style="max-height: 500px; width: 100%; object-fit: contain;" alt="{{ productview.producttitle }}">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="card border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-4">Customer Reviews</h4>
+                        {% for r in reviews %}
+                            <div class="rounded-4 p-3 mb-3 bg-light">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                    <a href="/profile/{{r.user.id}}" class="d-flex text-decoration-none text-dark align-items-center">
+                                        {% if r.user.profile.image %}
+                                            <img src="{{ r.user.profile.image.url }}" class="rounded-circle border me-3" style="width:48px; height:48px; object-fit:cover;">
+                                        {% else %}
+                                            <img src="/static/IMG/default.png" class="rounded-circle border me-3" style="width:48px; height:48px; object-fit:cover;">
+                                        {% endif %}
+                                        <div>
+                                            <h6 class="fw-bold mb-0">{{ r.user.username }}</h6>
+                                            <small class="text-muted">Reviewed in {{ r.country }} • {{ r.created_at }}</small>
+                                        </div>
+                                    </a>
+                                    <div class="text-warning fs-6">
+                                        {% for i in "12345"|make_list %}
+                                            {% if forloop.counter <= r.rating %}
+                                                <i class="fa-solid fa-star"></i>
+                                            {% else %}
+                                                <i class="fa-regular fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <span class="fw-bold text-dark small ms-1">{{ r.rating }}/5</span>
+                                    </div>
+                                </div>
+                                <hr class="text-muted opacity-25 my-3">
+                                <p class="small text-secondary mb-2">
+                                    <span class="text-dark me-1">Size: {{ r.size }}</span> |
+                                    <span class="text-dark">Color: {{ r.color }}</span>
+                                </p>
+                                <p class="mb-3 text-dark-emphasis">{{ r.review }}</p>
+                                {% if r.image %}
+                                    <div class="mb-3">
+                                        <img src="{{ r.image.url }}" class="img-fluid rounded border shadow-sm" style="max-width:120px; max-height:120px; object-fit:cover;">
+                                    </div>
+                                {% endif %}
+                                <div class="text-end">
+                                    <a href="/delete_review/{{ r.reviewid }}" class="btn btn-sm btn-outline-danger rounded-pill px-3"><i class="fa-solid fa-trash me-1"></i>Delete</a>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="alert alert-light border text-center py-4 text-muted">No reviews yet. Be the first to write one!</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if all_reviews_count > 5 %}
+                    <a href="/customerreview/{{ categories.categoryid }}/{{ productview.productviewid }}" class="review-link text-decoration-none text-dark">
+                        <div class="card review-card border rounded-4 mb-4">
+                            <div class="card-body text-center p-3">
+                                <h5 class="mb-0 fw-semibold">See more reviews ({{ all_reviews_count }})<i class="fa-solid fa-angle-right ms-1"></i></h5>
+                            </div>
+                        </div>
+                    </a>
+                {% endif %}
+                <div class="card border rounded-4 ">
+                    <div class="card-header bg-white border-bottom border-light p-4 rounded-top-4">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <div class="d-flex align-items-center">
+                                <a href="/profile/{{ user.id }}" class="d-flex align-items-center text-decoration-none text-dark">
+                                    {% if user.profile.image %}
+                                        <img src="{{ user.profile.image.url }}" class="rounded-circle border me-3" style="width:50px; height:50px; object-fit:cover;">
+                                    {% else %}
+                                        <img src="/static/IMG/default.png" class="rounded-circle border me-3" style="width:50px; height:50px; object-fit:cover;">
+                                    {% endif %}
+                                    <div>
+                                        <h5 class="fw-bold mb-0">Write a Review</h5>
+                                        <small class="text-muted">Posting as {{ user.username }}</small>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label class="form-label fw-bold d-block">Overall Rating</label>
+                                    <div class="fs-2 text-warning d-inline-flex gap-1 raw-rating-container" style="cursor: pointer;">
+                                        <i class="fa-solid fa-star rating-star" data-value="1"></i>
+                                        <i class="fa-solid fa-star rating-star" data-value="2"></i>
+                                        <i class="fa-solid fa-star rating-star" data-value="3"></i>
+                                        <i class="fa-solid fa-star rating-star" data-value="4"></i>
+                                        <i class="fa-solid fa-star rating-star" data-value="5"></i>
+                                    </div>
+                                    <input type="hidden" name="rating" id="rating" value="5">
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Review Description</label>
+                                <textarea class="form-control shadow-none border-secondary-subtle" rows="4" name="review" id="Review Description" placeholder="Share your experience with this item..." required onclick="myfunction1()"></textarea>
+                            </div>
+                            <div class="row g-3 mb-4">
+                                <div class="col-sm-6 col-md-4">
+                                    <label class="form-label fw-bold small text-secondary">Size Purchased</label>
+                                    <input type="text" class="form-control shadow-none" name="size" id="size" placeholder="e.g., S, M, L, XL" required onclick="myfunction2()">
+                                </div>
+                                <div class="col-sm-6 col-md-4">
+                                    <label class="form-label fw-bold small text-secondary">Color Option</label>
+                                    <input type="text" class="form-control shadow-none" name="color" id="color" placeholder="e.g., Black, Blue" required onclick="myfunction3()" >
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold small text-secondary">Country</label>
+                                    <input type="text" name="country" id="country" class="form-control shadow-none" placeholder="e.g., India"  onclick="myfunction4()" >
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-bold small text-secondary">Upload Dynamic Media Attachment</label>
+                                    <input type="file" class="form-control shadow-none" id="imageInput" name="image"  accept="image/*" onclick="myfunction5()">
+                                    <div class="mt-3">
+                                        <img id="previewImage" src="" class="img-fluid rounded border d-none" style="max-width:180px; max-height:180px; object-fit:contain;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-warning rounded-pill px-5 py-2.5 fw-bold text-uppercase shadow-sm" style="letter-spacing:0.05em">Submit Review</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // click image in show main image
+        function changeImage(src, element) {
+            document.getElementById('mainImage').src = src;
+            if(element) {
+                document.querySelectorAll('.thumb-img').forEach(el => el.classList.remove('active-thumb'));
+                element.classList.add('active-thumb');
+            }
+        }
+        // hover show in main image 
+        const originalImage = "{{ productview.productimage1 }}";
+        function showMainImage(image) {
+            document.getElementById("mainImage").src = image;
+        }
+        function resetMainImage() {
+            document.getElementById("mainImage").src = originalImage;
+        }
+        // star rating
+        const stars = document.querySelectorAll(".rating-star");
+        const ratingInput = document.getElementById("rating");
+        stars.forEach((star) => {
+            star.addEventListener("click", function () {
+                let value = this.dataset.value;
+                ratingInput.value = value;
+                stars.forEach((s) => {
+                    if (s.dataset.value <= value) {
+                        s.classList.remove("fa-regular");
+                        s.classList.add("fa-solid", "text-warning");
+                    } 
+                    else {
+                        s.classList.remove("fa-solid");
+                        s.classList.add("fa-regular");
+                    }
+                });
+            });
+        });
+        // upload image
+        document.getElementById("imageInput").addEventListener("change", function () {
+            const file = this.files[0];
+            const preview = document.getElementById("previewImage");
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove("d-none");
+                };
+                reader.readAsDataURL(file);
+            } 
+            else {
+                preview.src = "";
+                preview.classList.add("d-none");
+            }
+        });
+        // review js
+        function myfunction2() {
+            document.getElementById('size').style.border = '1px solid gray';
+        }
+        function myfunction3() {
+            document.getElementById('color').style.border = '1px solid gray';
+        }
+        function myfunction4() {
+            document.getElementById('country').style.border = '1px solid gray';
+        }
+        function myfunction5() {
+            document.getElementById('imageInput').style.border = '1px solid gray';
+        }
+    </script>
+{% endblock body %}

@@ -1,0 +1,26 @@
+from django.urls import path
+from .views import *
+urlpatterns = [
+    path('',index,name='index'),
+    path('register/', register, name='register'),
+    path('login/',login,name='login'),
+    path('logout/',logout,name='logout'),
+    path('forgetpassword/',forgetpassword,name='forgetpassword'),
+    path('editprofile/',editprofile,name='editprofile'),
+    path('collection/<int:categoryid>/',collection,name='collection'),
+    path('productview/<int:categoryid>/<int:productviewid>/',productview,name='productview'),
+    path('reaction/<int:productviewid>/<str:reaction>/',product_reaction,name='product_reaction'),
+    path('delete_review/<int:reviewid>/',delete_review,name='delete_review'),
+    path('profile/<int:user_id>/',profile,name='profile'),
+    path('cart/',Cart,name='cart'),
+    path('remove/<int:cartid>/',remove,name='remove'),
+    path('minus/<int:cartid>/',minus,name='minus'),
+    path('plus/<int:cartid>/',plus,name='plus'),
+    path('addtocart/<int:id>/',addtocart,name='addtocart'),
+    path('checkout/',checkout,name='checkout'),
+    path('thankyou/<str:orderid>/',thankyou,name='thankyou'),
+    path('conformorder/<int:orderid>/',conformorder,name='conformorder'),
+    path('myorder/',myorder,name='myorder'),
+    path('customerreview/<int:categoryid>/<int:productviewid>/',customerreview,name='customerreview'),
+    path('search_product/',search_product,name='search_product'),
+]

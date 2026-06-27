@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body{
+            font-family:Arial;
+            background:#f5f5f5;
+        }
+
+        .container{
+            width:700px;
+            margin:auto;
+            background:white;
+            padding:30px;
+            border-radius:8px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th,td{
+            padding:10px;
+            border-bottom:1px solid #ddd;
+        }
+
+        .btn{
+            display:inline-block;
+            background:#ff9900;
+            color:white;
+            padding:12px 20px;
+            text-decoration:none;
+            border-radius:5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Thank You For Your Order</h2>
+
+<p>Hello {{ order.firstname }},</p>
+
+<p>Your order has been successfully placed.</p>
+
+<h3>Order ID :
+ORD{{ order.orderid|stringformat:"06d" }}
+</h3>
+
+<table>
+
+<tr>
+<th>Product</th>
+<th>Qty</th>
+<th>Price</th>
+</tr>
+
+{% for item in items %}
+
+<tr>
+<td>{{ item.productview_id.producttitle }}</td>
+<td>{{ item.quantity }}</td>
+<td>₹{{ item.productview_id.productprice }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<h3>Subtotal : ₹{{ order.subtotal }}</h3>
+
+<h3>Delivery : ₹{{ order.deliverycharges }}</h3>
+
+<h2>Total : ₹{{ order.total }}</h2>
+
+<hr>
+
+<h3>Shipping Address</h3>
+
+<p>
+
+{{ order.firstname }} {{ order.lastname }}<br>
+
+{{ order.address }}<br>
+
+{{ order.city }},
+
+{{ order.state }}
+
+{{ order.country }}
+
+{{ order.pincode }}<br>
+
+Phone : {{ order.number }}
+
+</p>
+
+<br>
+
+<center>
+
+<a href="http://127.0.0.1:8000/myorder/" class="btn">
+
+View Order
+
+</a>
+
+</center>
+
+</div>
+
+</body>
+
+</html>

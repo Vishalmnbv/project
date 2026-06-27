@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+<title>eiser - Edit Profile</title>
+{% endblock title %}
+{% block body %}
+    <style>
+         .breadcrumb a{
+            transition: all .3s ease;
+        }
+        .breadcrumb a:hover{
+            color: red !important;
+            text-decoration: underline !important;
+        }
+        .breadcrumb-active{
+            cursor: default;
+            transition: all .3s ease;
+        }
+        .breadcrumb-active:hover{
+            color: red !important;
+            text-decoration: underline !important;
+        }
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-group i {
+            position: absolute;
+            right: 15px; 
+            color: #6c757d;
+            z-index: 10;
+            cursor: pointer;
+        }
+    </style>
+    <div class="container-fluid p-0">
+        <nav class="navbar navbar-dark bg-dark px-3">
+            <div class="d-flex align-items-center w-100">
+                <a class="navbar-brand fw-bold mb-0" data-bs-toggle="offcanvas" href="#offcanvasMenu" role="button" aria-controls="offcanvasMenu"><i class="fa-solid fa-bars me-2"></i>All</a>
+            </div>
+        </nav>
+    </div>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header bg-dark text-white">
+            <h5 class="offcanvas-title fw-bold" id="offcanvasMenuLabel"><i class="fa-solid fa-circle-user text-warning me-2"></i>
+                {% if user.is_authenticated %} Hello, {{ user.username }} {% else %} Hello, Sign In {% endif %}
+            </h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"> </button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <div class="p-3 border-bottom">
+                {% if user.is_authenticated %}
+                    <div class="d-grid mb-2"><a href="/logout/" class="btn btn-danger rounded-pill fw-bold"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a></div>
+                {% else %}
+                    <div class="d-grid gap-2">
+                        <a href="/login/" class="btn btn-warning rounded-pill fw-bold"> <i class="fa-solid fa-right-to-bracket me-2"></i>Sign In</a>
+                        <a href="/register/"class="btn btn-warning rounded-pill fw-bold"><i class="fa-solid fa-user-plus me-2"></i>Create Account</a>
+                    </div>
+                {% endif %}
+            </div>
+            <ul class="nav flex-column">
+                {% for category in category %}
+                    <li class="nav-item">
+                        <a href="/collection/{{category.categoryid}}"class="nav-link text-dark fw-semibold py-3 border-bottom">
+                            <i class="fa-solid fa-tag me-2 text-danger"></i>{{category.categoryname}}
+                        </a>
+                    </li>
+                {% empty %}
+                    <div class="text-warning ms-3">No categories found</div>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container py-4">
+        <div class="row w-75 m-auto">
+            <div class="col-10">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb small mb-0">
+                        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary fw-bold"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+                        <li class="breadcrumb-item active breadcrumb-active text-secondary fw-semibold"><i class="fa-solid fa-user-edit me-1"></i>Edit Profile</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <form class="row border border-secoundry border border-1 p-2 w-50 m-auto rounded-4 bg-white" action="/editprofile/" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h3 class="text-center mb-4 text-dark"><i class="fa-solid fa-user-edit me-2"></i>Edit Profile</h3>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">First Name <span class="text-danger">*</span></label>
+            <div class="input-group">
+                <input type="text" class="form-control shadow-none rounded-pill" name="firstname" id="firstname" placeholder="Enter first name" value="{{ user.first_name }}" required  onclick="myfunction13()">
+                <i class="fa-solid fa-user"></i>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Last Name <span class="text-danger">*</span></label>
+            <div class="input-group">
+                <input type="text" class="form-control shadow-none rounded-pill" name="lastname" id="lastname" placeholder="Enter last name" value="{{ user.last_name }}" required  onclick="myfunction14()">
+                <i class="fa-solid fa-user"></i>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Username <span class="text-danger">*</span></label>
+            <div class="input-group">
+                <input type="text" class="form-control shadow-none rounded-pill" name="username" id="username" placeholder="Enter username" value="{{ user.username }}" required  onclick="myfunction15()">
+                <i class="fa-solid fa-user-tag"></i>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Email <span class="text-danger">*</span></label>
+            <div class="input-group">
+                <input type="email" class="form-control shadow-none rounded-pill" name="email" id="email" placeholder="Enter email" value="{{ user.email }}" required  onclick="myfunction16()">
+                <i class="fa-solid fa-envelope"></i>
+            </div>
+        </div>
+        <div class="col-md-12 mb-3">
+            <label class="form-label">Profile Image</label>
+            <input type="file"class="form-control shadow-none rounded-pill" name="profile_image" id="image" accept="image/* "onchange="previewImage(event)"  onclick="myfunction17()">
+            <div class="mt-3 d-flex justify-content-center">
+                {% if user.profile.image %}
+                    <img src="{{ user.profile.image.url }}" id="preview" class="rounded-pill" style="width:150px; height:150px; object-fit:fill; border:1px solid #ccc;">
+                {% else %}
+                    <img src="/static/IMG/default.png" id="preview"  class="rounded-pill" style="width:150px; height:150px; object-fit:fill; border:1px solid #ccc;">
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-12 text-center mt-3">
+            <button type="submit" class="btn btn-warning w-100 fs-5 rounded-pill"><i class="fa-solid fa-user-edit me-2"></i>Update Profile</button>
+        </div>
+    </form>
+    <script>
+        // edit profile js
+        function myfunction13() {
+            document.getElementById('firstname').style.border = '1px solid gray';
+        } 
+        function myfunction14() {
+            document.getElementById('lastname').style.border = '1px solid gray';
+        }
+        function myfunction15() {
+            document.getElementById('username').style.border = '1px solid gray';
+        }
+        function myfunction16() {
+            document.getElementById('email').style.border = '1px solid gray';
+        }
+        function myfunction17() {
+            document.getElementById('image').style.border = '1px solid gray';
+        }
+        // upload image
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById('preview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+    {% endblock body %}
+
+
