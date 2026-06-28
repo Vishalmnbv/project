@@ -4,7 +4,7 @@ from . import api_views
 urlpatterns = [
     path("index/", api_views.index, name="index-api"),
     path("register/",api_views.register,name="register-api",),
-    path("login/",api_views.login,name="login-api",),
+    path('login/', api_views.login_api, name='login_api'),
     path("logout/",api_views.logout,name="logout-api",),
     path("forgetpassword/",api_views.forgetpassword,name="forgetpassword-api",),
     path("editprofile/",api_views.editprofile,name="editprofile-api",),

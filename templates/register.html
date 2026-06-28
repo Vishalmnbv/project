@@ -16,7 +16,7 @@
             cursor: default;
             transition: all .3s ease;
         }
-        .breadcrumb-active:hover{
+        .breadcrumb-item:hover{
             color: red !important;
             text-decoration: underline !important;
         }
@@ -71,77 +71,89 @@
             </ul>
         </div>
     </div>
-    <div class="container py-4">
-        <div class="row w-75 m-auto">
-            <div class="col-10">
+    <div class="container py-3">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-9">
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb small mb-0">
-                        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary fw-bold"><i class="fa-solid fa-house me-1"></i>Home</a></li>
-                        <li class="breadcrumb-item active breadcrumb-active text-secondary fw-semibold"><i class="fa-solid fa-user-plus me-1"></i>Register</li>
+                    <ol class="breadcrumb bg-light rounded-3 px-3 py-2 shadow-sm mb-0">
+                        <li class="breadcrumb-item">
+                            <a href="/" class="text-decoration-none text-dark"><i class="fa-solid fa-house me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item active  text-dark" aria-current="page">
+                            <i class="fa-solid fa-user-plus me-1"></i>Register
+                        </li>
                     </ol>
                 </nav>
             </div>
         </div>
     </div>
-    <form class="row border border-secoundry border border-1 p-2 w-50 m-auto rounded-4 bg-white" action="/register/" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <h3 class="text-center mb-4 text-dark"><i class="fa-solid fa-user-plus me-2"></i>Register Here</h3>
-        <div class="col-md-6 mb-3">
-            <label class="form-label">First Name <span class="text-danger">*</span></label>
-            <div class="input-group">
-                <input type="text" class="form-control shadow-none rounded-pill" name="firstname" id="firstname" placeholder="Enter first name" required onclick="myfunction1()">
-                <i class="fa-solid fa-user"></i>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-9">
+                <form class="card shadow p-4 rounded-4" action="/register/" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <h3 class="text-center mb-4"><i class="fa-solid fa-user-plus text-warning me-2"></i>Register Here</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">First Name <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-user"></i>
+                                <input type="text" class="form-control shadow-none" name="firstname" id="firstname"placeholder="Enter first name"onclick="myfunction1()" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Last Name <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-user"></i>
+                                <input type="text" class="form-control shadow-none" name="lastname" id="lastname" placeholder="Enter last name" onclick="myfunction2()" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Username <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-user-tag"></i>
+                                <input type="text" class="form-control shadow-none" name="username" id="username" placeholder="Enter username"onclick="myfunction3()" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-envelope"></i>
+                                <input type="email" class="form-control shadow-none" name="email" id="email" placeholder="Enter email" onclick="myfunction4()" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Password <span class="text-danger">*</span></label>
+                            <div class="input-group">                        
+                                <input type="password" class="form-control shadow-none" id="password" name="password" placeholder="Enter password" onclick="myfunction5()" required>
+                                <i class="fa-solid fa-eye-slash" id="icon1"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                            <div class="input-group">                        
+                                <input type="password" class="form-control shadow-none" id="conformpassword" name="conformpassword" placeholder="Confirm password" onclick="myfunction6()" required>
+                                <i class="fa-solid fa-eye-slash" id="icon2"></i>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Profile Image <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control shadow-none" id="image" name="image" accept="image/*" onchange="previewImage(event)" onclick="myfunction7()">
+                            <div class="text-center mt-3">
+                                <img id="preview" src="/static/IMG/default.png" class="rounded-circle border" width="150" height="150"style="object-fit:cover;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-warning w-100 py-2 fw-bold rounded-pill"><i class="fa-solid fa-user-check me-2"></i>Register</button>
+                            <p class="text-center mt-3 mb-0">Already have an account?
+                                <a href="/login/" class="text-decoration-none fw-bold">Login Here</a>
+                            </p>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Last Name <span class="text-danger">*</span></label>
-            <div class="input-group">
-                <input type="text" class="form-control shadow-none rounded-pill" name="lastname" id="lastname" placeholder="Enter last name" required onclick="myfunction2()">
-                <i class="fa-solid fa-user"></i>
-            </div>
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Username <span class="text-danger">*</span></label>
-            <div class="input-group">
-                <input type="text" class="form-control shadow-none rounded-pill" name="username" id="username" placeholder="Enter username" required onclick="myfunction3()">
-                <i class="fa-solid fa-user-tag"></i>
-            </div>
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Email <span class="text-danger">*</span></label>
-            <div class="input-group">
-                <input type="email" class="form-control shadow-none rounded-pill" name="email" id="email" placeholder="Enter email" required onclick="myfunction4()">
-                <i class="fa-solid fa-envelope"></i>
-            </div>
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Password <span class="text-danger">*</span></label>
-            <div class="input-group">
-                <span class="input-group"></span>
-                <input type="password" class="form-control shadow-none rounded-pill" id="password" name="password" placeholder="Enter password" required onclick="myfunction5()">
-                <i class="fa-solid fa-eye-slash" id="icon1"></i>
-            </div>
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
-            <div class="input-group">
-                <span class="input-group"></span>
-                <input type="password" class="form-control shadow-none rounded-pill" id="conformpassword"name="conformpassword" placeholder="Confirm password" required onclick="myfunction6()">
-                <i class="fa-solid fa-eye-slash" id="icon2"></i>
-            </div>
-        </div>
-        <div class="col-md-12 mb-3">
-            <label class="form-label">Profile Image</label>
-            <input type="file"class="form-control shadow-none rounded-pill" id="image" name="image"accept="image/* "onchange="previewImage(event)" onclick="myfunction7()">
-            <div class="mt-3 d-flex justify-content-center">
-                <img id="preview" src="/static/IMG/default.png" alt="" class="rounded-pill" style="width:150px; height:150px; object-fit:fill; border:1px solid #ccc;" onclick="myfunction7()">
-            </div>
-        </div>
-        <div class="col-md-12 text-center mt-3">
-            <button type="submit" class="btn btn-warning w-100 fs-5 rounded-pill"><i class="fa-solid fa-user-check me-2"></i>Register</button>
-            <div class="text-center mt-3">Already have an account?<a href="/login/" class="text-decoration-none fw-semibold"> Login Here</a></div>
-        </div>
-    </form>
+    </div>
     <script>
         // register js
         function myfunction1() {

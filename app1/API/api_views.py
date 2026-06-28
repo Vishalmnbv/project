@@ -1,8 +1,11 @@
 from rest_framework.decorators import api_view, parser_classes, permission_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from ..models import Profile,Category,Productview,Review,cart,Order, Orderitem, Otracker,ProductReaction,ProductViewCount,Topproduct
 from ..serializers import CategorySerializer, ReviewSerializer, CartSerializer, OrderSerializer, OrderItemSerializer,TopproductSerializer
@@ -10,12 +13,12 @@ from ..serializers import CategorySerializer, TopproductSerializer,ProductViewSe
 from django.shortcuts import get_object_or_404
 from django.contrib import auth
 from rest_framework.decorators import api_view
+from django.contrib.auth import authenticate, login
 from rest_framework.response import Response
 from django.core.paginator import Paginator
 import math
 
 
-@api_view(["GET"])
 def index(request):
     category = Category.objects.all()
     topproduct = Topproduct.objects.all()
@@ -80,32 +83,21 @@ def register(request):
         "message": "Account created successfully"
     })
 @api_view(['POST'])
-def login(request):
+def login_api(request):
     username = request.data.get('username')
     password = request.data.get('password')
-    user = auth.authenticate(
-        request,
-        username=username,
-        password=password
-    )
+    user = authenticate(username=username, password=password)
     if user is not None:
-        auth.login(request, user)
+        login(request, user)
         return Response({
             "status": True,
-            "message": "Login successful",
-            "user": {
-                "id": user.id,
-                "username": user.username,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "email": user.email,
-            }
-        })
+            "message": "Login Successful",
+            "username": user.username
+        }, status=status.HTTP_200_OK)
     return Response({
         "status": False,
-        "message": "Invalid username or password"
-    }, status=401)
-@api_view(['POST'])
+        "message": "Invalid Username or Password"
+    }, status=status.HTTP_401_UNAUTHORIZED)
 def logout(request):
     username = getattr(request.user, 'username', 'User')
     auth.logout(request)

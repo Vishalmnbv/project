@@ -16,7 +16,7 @@
             cursor: default;
             transition: all .3s ease;
         }
-        .breadcrumb-active:hover{
+        .breadcrumb-item:hover{
             color: red !important;
             text-decoration: underline !important;
         }
@@ -71,44 +71,57 @@
             </ul>
         </div>
     </div>
-    <div class="container py-4">
-        <div class="row w-75 m-auto">
-            <div class="col-10">
+    <div class="container py-3">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-9">
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb small mb-0">
-                        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary fw-bold"><i class="fa-solid fa-house me-1"></i>Home</a></li>
-                        <li class="breadcrumb-item active breadcrumb-active text-secondary fw-semibold"><i class="fa-solid fa-user-plus me-1"></i>Login</li>
+                    <ol class="breadcrumb bg-light rounded-3 px-3 py-2 shadow-sm mb-0">
+                        <li class="breadcrumb-item">
+                            <a href="/" class="text-decoration-none text-dark"><i class="fa-solid fa-house me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item active text-dark" aria-current="page">
+                            <i class="fa-solid fa-right-to-bracket me-1"></i>Login
+                        </li>
                     </ol>
                 </nav>
             </div>
         </div>
     </div>
-    <form class="row border border-secoundry border border-1 p-2 w-50 m-auto rounded-4 bg-white" action="/login/" method="POST">
-        {% csrf_token %}
-        <h3 class="text-center mb-4 text-dark"><i class="fa-solid fa-user-plus me-2"></i>Login Here</h3>
-        <div class="col-md-12 mb-3">
-            <label class="form-label">Username <span class="text-danger">*</span></label>
-            <div class="input-group">
-                <input type="text" class="form-control shadow-none rounded-pill" name="username" id="username" placeholder="Enter username" required value="{{username}}" onclick="myfunction8()">
-                <i class="fa-solid fa-user-tag"></i>
-            </div> 
-        </div>
-        <div class="col-md-12 mb-3">
-            <label class="form-label">Password <span class="text-danger">*</span></label>
-            <div class="input-group">
-                <span class="input-group"></span>
-                <input type="password" class="form-control shadow-none rounded-pill" id="psw" name="password" placeholder="Enter password" required onclick="myfunction9()">
-                <i class="fa-solid fa-eye-slash" id="icon3"></i></span>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-9">
+                <form class="card shadow border-0 rounded-4 p-4 bg-white" action="/login/" method="POST">
+                    {% csrf_token %}
+                    <h3 class="text-center mb-4">
+                        <i class="fa-solid fa-right-to-bracket text-warning me-2"></i>Login Here
+                    </h3>
+                    <div class="mb-3">
+                        <label class="form-label">Username <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <i class="fa-solid fa-user-tag"></i>
+                            <input type="text" class="form-control shadow-none" name="username" id="username" placeholder="Enter username" value="{{username}}" onclick="myfunction8()"required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="password" class="form-control shadow-none" id="psw" name="password" placeholder="Enter password" onclick="myfunction9()" required>
+                            <i class="fa-solid fa-eye-slash" id="icon3"></i>             
+                        </div>
+                    </div>
+                    <div class="text-end mb-3">
+                        <a href="/forgetpassword/" class="text-decoration-none fw-semibold">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100 py-2 fw-bold rounded-pill">
+                        <i class="fa-solid fa-right-to-bracket me-2"></i>Login
+                    </button>
+                    <p class="text-center mt-3 mb-0">Don't have an account?
+                        <a href="/register/" class="text-decoration-none fw-bold">Register Here</a>
+                    </p>
+                </form>
             </div>
         </div>
-        <div class="col-md-12 text-end mb-3">
-            <a href="/forgetpassword/" class="text-decoration-none small text-primary fw-semibold">Forgot Password</a>
-        </div>
-        <div class="col-md-12 text-center">
-            <button type="submit" class="btn btn-warning w-100 fs-5 rounded-pill"><i class="fa-solid fa-user-check me-2"></i>Login</button>
-        </div>
-        <div class="col-md-12 text-center mt-3">Don't have an account?<a href="/register/" class="text-decoration-none fw-semibold"> Register Here</a></div>
-    </form>
+    </div>
     <script>
         // login js
         function myfunction8() {
