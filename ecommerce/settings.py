@@ -26,7 +26,11 @@ SECRET_KEY = 'django-insecure-ngitc!%2%ttpn7p6rm+-j&&6px-*9%2v3guo!dtww7tf5f*sq4
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "project-1-aln6.onrender.com",
+]
 
 
 # Application definition
