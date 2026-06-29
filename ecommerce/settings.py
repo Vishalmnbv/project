@@ -91,7 +91,9 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', 'postgres://project1_db_5w3s_user:JX3rWBTeCdjZisLqcSXXxiaZYI18rvBP@dpg-d90vu8u8bjmc739iqq3g-a.oregon-postgres.render.com/project1_db_5w3s?sslmode=require')
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=True
     )
 }
 
