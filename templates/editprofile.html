@@ -126,7 +126,7 @@
                                 {% if user.profile.image %}
                                     <img src="{{ user.profile.image.url }}" id="preview" class="rounded-pill" style="width:150px; height:150px; object-fit:fill; border:1px solid #ccc;">
                                 {% else %}
-                                    <img src="/static/IMG/default.png" id="preview"  class="rounded-pill" style="width:150px; height:150px; object-fit:fill; border:1px solid #ccc;">
+                                    <img src="{% static 'IMG/default.png' %}" id="preview"  class="rounded-pill" style="width:150px; height:150px; object-fit:fill; border:1px solid #ccc;">
                                 {% endif %}
                             </div>
                         </div>

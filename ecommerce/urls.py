@@ -24,7 +24,6 @@ urlpatterns = [
     path('', include('app1.urls')),       # Website URLs
     path('api/', include('app1.API.api_urls')),  # Space ki jagah _ lagayein # API URLs
 ]
-
-
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
