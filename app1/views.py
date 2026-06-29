@@ -471,3 +471,12 @@ def search_product(request):
         if first_product:
             selected_category = first_product.category_id  
     return render(request, 'search.html', {'query': query,'page_obj': page_obj,'category': category,'selected_category': selected_category})
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+
+def create_render_admin(request):
+    # Agar 'renderadmin' naam ka user nahi hai, toh bana do
+    if not User.objects.filter(username='renderadmin').exists():
+        User.objects.create_superuser('renderadmin', 'admin@example.com', 'Mypassword123@')
+        return HttpResponse("Superuser 'renderadmin' successfully created!")
+    return HttpResponse("User already exists!")
