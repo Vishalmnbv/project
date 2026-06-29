@@ -48,8 +48,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-MIDDLEWARE = [
-    'ecommerce.settings.AutoSuperuserMiddleware', 
+MIDDLEWARE = [ 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -146,23 +145,3 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-
-# Auto create superuser on deployment via Django Signals
-from django.db.models.signals import post_migrate
-from django.contrib.auth import get_user_model
-# Foolproof Auto-Superuser Middleware Workaround
-class AutoSuperuserMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
-        # Server start hote hi ya pehli request par create karega
-        from django.contrib.auth import get_user_model
-        try:
-            User = get_user_model()
-            if not User.objects.filter(username='admin').exists():
-                User.objects.create_superuser('admin', 'admin@example.com', 'admin1234')
-                print("MIDDLEWARE: Superuser 'admin' created successfully!")
-        except Exception:
-            pass
-
-    def __call__(self, request):
-        return self.get_response(request)
