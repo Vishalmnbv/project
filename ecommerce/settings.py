@@ -159,11 +159,10 @@ MESSAGE_TAGS = {
 # Auto create superuser on deployment via Django Signals
 from django.db.models.signals import post_migrate
 from django.contrib.auth import get_user_model
-
-def create_superuser_post_migrate(sender, **kwargs):
+try:
     User = get_user_model()
     if not User.objects.filter(username='admin').exists():
         User.objects.create_superuser('admin', 'admin@example.com', 'admin1234')
-        print('Superuser "admin" successfully created!')
-
-post_migrate.connect(create_superuser_post_migrate)
+        print("Superuser 'admin' created successfully via direct execution!")
+except Exception as e:
+    pass
