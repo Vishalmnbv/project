@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ["*"]
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "project-1-aln6.onrender.com",
+    "project-1-aln6.onrender.com', 'localhost', '127.0.0.1",
 ]
 
 
