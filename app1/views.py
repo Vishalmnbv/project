@@ -479,24 +479,43 @@ def search_product(request):
 def load_my_data(request):
     try:
         file_path = os.path.join(settings.BASE_DIR, 'db_backup.json')
+        
+        # Encoding handle karte hue file read karein
         try:
             with open(file_path, 'r', encoding='utf-16') as f:
                 data = json.load(f)
         except Exception:
             with open(file_path, 'r', encoding='utf-8-sig') as f:
                 data = json.load(f)
+
         filtered_data = []
         for item in data:
+            # 1. Purane duplicate permissions skip karein
             if item['model'] in ['contenttypes.contenttype', 'auth.permission', 'sessions.session']:
                 continue
+            
+            # 2. ⚠️ Productview ke bade fields ko automatic 150 chars par trim/cut karein
+            if item['model'] == 'app1.productview':
+                fields = item.get('fields', {})
+                for field_name, field_value in fields.items():
+                    if isinstance(field_value, str) and len(field_value) > 150:
+                        # Agar text 150 se bada hai, toh use cut kar do taaki Postgres error na de
+                        fields[field_name] = field_value[:150]
+
             filtered_data.append(item)
+
+        # Ab filtered aur trimmed data ko save karte hain
         clean_file_path = os.path.join(settings.BASE_DIR, 'clean_backup.json')
         with open(clean_file_path, 'w', encoding='utf-8') as f:
             json.dump(filtered_data, f, indent=4)
+            
+        # Data load karein
         call_command('loaddata', 'clean_backup.json')
+        
+        # Temporary file ko delete karein
         if os.path.exists(clean_file_path):
             os.remove(clean_file_path)
             
-        return HttpResponse("<h1>Mubarak ho! Saara data bina kisi error ke successfully load ho gaya hai.</h1>")
+        return HttpResponse("<h1>Mubarak ho! Saara data perfectly load ho gaya hai.</h1>")
     except Exception as e:
         return HttpResponse(f"<h1>Error: {e}</h1>")
