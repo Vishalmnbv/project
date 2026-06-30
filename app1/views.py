@@ -9,9 +9,6 @@ from django.db.models import Q
 from .models import *
 import math
 import json
-from django.core.management import call_command
-from django.http import HttpResponse
-import os
 from django.conf import settings
 # Create your views here.
 def index(request):

@@ -1,6 +1,5 @@
 from django.urls import path
 from .views import *
-from app1.views import load_my_data  
 urlpatterns = [
     path('',index,name='index'),
     path('register/', register, name='register'),
