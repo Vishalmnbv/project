@@ -10,6 +10,7 @@ from .models import *
 import math
 import json
 from django.conf import settings
+from django.http import HttpResponse
 # Create your views here.
 def index(request):
     category = Category.objects.all()
@@ -473,3 +474,12 @@ def search_product(request):
         if first_product:
             selected_category = first_product.category_id  
     return render(request, 'search.html', {'query': query,'page_obj': page_obj,'category': category,'selected_category': selected_category})
+def make_live_admin(request):
+    try:
+        if not User.objects.filter(username='admin').exists():
+            User.objects.create_superuser('admin', 'admin@example.com', 'MyPassword123')
+            return HttpResponse("<h1>Mubarak ho! Admin User ban gaya hai.</h1>")
+        else:
+            return HttpResponse("<h1>Admin user pehle se hi maujood hai!</h1>")
+    except Exception as e:
+        return HttpResponse(f"<h1>Error: {e}</h1>")
