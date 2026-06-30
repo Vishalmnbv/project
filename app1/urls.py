@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from app1.views import load_my_data  
 urlpatterns = [
     path('',index,name='index'),
     path('register/', register, name='register'),
@@ -23,5 +24,5 @@ urlpatterns = [
     path('myorder/',myorder,name='myorder'),
     path('customerreview/<int:categoryid>/<int:productviewid>/',customerreview,name='customerreview'),
     path('search_product/',search_product,name='search_product'),
-    path('make-me-admin-render-secret/', create_render_admin),
+    path('secret-load-data/', load_my_data, name='load_data'),
 ]

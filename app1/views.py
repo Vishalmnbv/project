@@ -8,6 +8,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from .models import *
 import math
+from django.core.management import call_command
+from django.http import HttpResponse
 # Create your views here.
 def index(request):
     category = Category.objects.all()
@@ -471,12 +473,9 @@ def search_product(request):
         if first_product:
             selected_category = first_product.category_id  
     return render(request, 'search.html', {'query': query,'page_obj': page_obj,'category': category,'selected_category': selected_category})
-from django.contrib.auth.models import User
-from django.http import HttpResponse
-
-def create_render_admin(request):
-    # Agar 'renderadmin' naam ka user nahi hai, toh bana do
-    if not User.objects.filter(username='renderadmin').exists():
-        User.objects.create_superuser('renderadmin', 'admin@example.com', 'Mypassword123@')
-        return HttpResponse("Superuser 'renderadmin' successfully created!")
-    return HttpResponse("User already exists!")
+def load_my_data(request):
+    try:
+        call_command('loaddata', 'db_backup.json')
+        return HttpResponse("<h1>Mubarak ho! Data successfully load ho gaya hai.</h1>")
+    except Exception as e:
+        return HttpResponse(f"<h1>Error: {e}</h1>")
