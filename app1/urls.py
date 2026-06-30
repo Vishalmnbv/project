@@ -24,5 +24,4 @@ urlpatterns = [
     path('myorder/',myorder,name='myorder'),
     path('customerreview/<int:categoryid>/<int:productviewid>/',customerreview,name='customerreview'),
     path('search_product/',search_product,name='search_product'),
-    path('secret-load-data/', load_my_data, name='load_data'),
 ]
