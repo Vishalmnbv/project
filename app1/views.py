@@ -485,13 +485,18 @@ def load_my_data(request):
         except Exception:
             with open(file_path, 'r', encoding='utf-8-sig') as f:
                 data = json.load(f)
+        filtered_data = []
+        for item in data:
+            if item['model'] in ['contenttypes.contenttype', 'auth.permission', 'sessions.session']:
+                continue
+            filtered_data.append(item)
         clean_file_path = os.path.join(settings.BASE_DIR, 'clean_backup.json')
         with open(clean_file_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4)
+            json.dump(filtered_data, f, indent=4)
         call_command('loaddata', 'clean_backup.json')
         if os.path.exists(clean_file_path):
             os.remove(clean_file_path)
             
-        return HttpResponse("<h1>Mubarak ho! Data successfully load ho gaya hai.</h1>")
+        return HttpResponse("<h1>Mubarak ho! Saara data bina kisi error ke successfully load ho gaya hai.</h1>")
     except Exception as e:
         return HttpResponse(f"<h1>Error: {e}</h1>")
