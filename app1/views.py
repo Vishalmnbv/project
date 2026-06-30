@@ -8,8 +8,11 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from .models import *
 import math
+import json
 from django.core.management import call_command
 from django.http import HttpResponse
+import os
+from django.conf import settings
 # Create your views here.
 def index(request):
     category = Category.objects.all()
@@ -475,7 +478,20 @@ def search_product(request):
     return render(request, 'search.html', {'query': query,'page_obj': page_obj,'category': category,'selected_category': selected_category})
 def load_my_data(request):
     try:
-        call_command('loaddata', 'db_backup.json')
+        file_path = os.path.join(settings.BASE_DIR, 'db_backup.json')
+        try:
+            with open(file_path, 'r', encoding='utf-16') as f:
+                data = json.load(f)
+        except Exception:
+            with open(file_path, 'r', encoding='utf-8-sig') as f:
+                data = json.load(f)
+        clean_file_path = os.path.join(settings.BASE_DIR, 'clean_backup.json')
+        with open(clean_file_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4)
+        call_command('loaddata', 'clean_backup.json')
+        if os.path.exists(clean_file_path):
+            os.remove(clean_file_path)
+            
         return HttpResponse("<h1>Mubarak ho! Data successfully load ho gaya hai.</h1>")
     except Exception as e:
         return HttpResponse(f"<h1>Error: {e}</h1>")
