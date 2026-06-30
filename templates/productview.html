@@ -316,7 +316,7 @@
                                         {% if r.user.profile.image %}
                                             <img src="{{ r.user.profile.image.url }}" class="rounded-circle border me-3" style="width:48px; height:48px; object-fit:cover;">
                                         {% else %}
-                                            <img src="/static/IMG/default.png" class="rounded-circle border me-3" style="width:48px; height:48px; object-fit:cover;">
+                                            <img src="{% static 'IMG/default.png' %}" class="rounded-circle border me-3" style="width:48px; height:48px; object-fit:cover;">
                                         {% endif %}
                                         <div>
                                             <h6 class="fw-bold mb-0">{{ r.user.username }}</h6>
