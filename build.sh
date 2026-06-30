@@ -11,5 +11,3 @@ python manage.py collectstatic --no-input
 # Run Migrations
 python manage.py migrate
 
-# YE WALI LINE SABSE NEECHE ADD KAREIN:
-python manage.py loaddata db_backup.json
