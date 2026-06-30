@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import  Category,Productview,Review,cart,Order, Orderitem,ProductReaction,ProductViewCount,Topproduct
+from .models import  Category,Productview,Review,cart,Order, Orderitem,ProductReaction,ProductViewCount,Topproduct,Profile
 from django.contrib.auth.models import User
 
 
@@ -22,15 +22,29 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
 class UserSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
             "id",
+            "username",
             "first_name",
             "last_name",
-            "username",
             "email",
+            "image",
         ]
+
+    def get_image(self, obj):
+        request = self.context.get("request")
+
+        try:
+            if obj.profile.image:
+                return request.build_absolute_uri(obj.profile.image.url)
+        except Profile.DoesNotExist:
+            return None
+
+        return None
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -52,12 +66,22 @@ class ProductReactionSerializer(serializers.ModelSerializer):
         model = ProductReaction
         fields = '__all__'
 class ReviewSerializer(serializers.ModelSerializer):
-
     user = UserSerializer(read_only=True)
 
     class Meta:
         model = Review
-        fields = "__all__"
+        fields = [
+            "reviewid",
+            "user",
+            "product",
+            "rating",
+            "review",
+            "created_at",
+            "image",
+            "size",
+            "color",
+            "country",
+        ]
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = cart

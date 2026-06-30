@@ -356,7 +356,7 @@ def delete_review(request, reviewid):
             "status": False,
             "message": "Review not found."
         }, status=404)
-@api_view(['GET'])
+@api_view(["GET"])
 def profile(request, user_id):
     try:
         profile_user = User.objects.get(id=user_id)
@@ -365,18 +365,22 @@ def profile(request, user_id):
             "status": False,
             "message": "User not found"
         }, status=404)
+
     reviews = Review.objects.filter(
         user=profile_user
     ).select_related(
-        'user', 'product'
-    ).order_by('-created_at')
+        "user", "product"
+    ).order_by("-created_at")
+
     product_views = Productview.objects.none()
+
     if request.user.is_authenticated:
         product_views = Productview.objects.filter(
             productviewid__in=Review.objects.filter(
                 user=profile_user
-            ).values_list('product_id', flat=True)
+            ).values_list("product_id", flat=True)
         )
+
     return Response({
         "status": True,
         "profile_user": {
@@ -385,9 +389,19 @@ def profile(request, user_id):
             "first_name": profile_user.first_name,
             "last_name": profile_user.last_name,
             "email": profile_user.email,
+            "image": request.build_absolute_uri(profile_user.profile.image.url)
+            if hasattr(profile_user, "profile") and profile_user.profile.image
+            else None,
         },
-        "reviews": ReviewSerializer(reviews, many=True).data,
-        "product_views": ProductViewSerializer(product_views, many=True).data,
+        "reviews": ReviewSerializer(
+            reviews,
+            many=True,
+            context={"request": request}
+        ).data,
+        "product_views": ProductViewSerializer(
+            product_views,
+            many=True
+        ).data,
     })
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
