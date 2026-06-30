@@ -50,30 +50,9 @@ class ProductReactionSerializer(serializers.ModelSerializer):
         model = ProductReaction
         fields = '__all__'
 class ReviewSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source="user.username", read_only=True)
-    profile_image = serializers.SerializerMethodField()
     class Meta:
         model = Review
-        fields = [
-            "id",
-            "username",
-            "profile_image",
-            "rating",
-            "review",
-            "image",
-            "size",
-            "color",
-            "country",
-            "created_at",
-        ]
-
-    def get_profile_image(self, obj):
-        request = self.context.get("request")
-
-        if obj.user and hasattr(obj.user, "profile") and obj.user.profile.image:
-            return request.build_absolute_uri(obj.user.profile.image.url)
-
-        return None
+        fields = "__all__"
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = cart
