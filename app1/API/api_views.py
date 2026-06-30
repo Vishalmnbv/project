@@ -306,7 +306,7 @@ def productview(request, categoryid, productviewid):
         "rating": rating,
         "discount": discount,
         "variants": ProductViewSerializer(page_obj, many=True).data,
-        "reviews": ReviewSerializer(reviews, many=True).data,
+        "reviews": ReviewSerializer(reviews,many=True,context={"request": request}).data,
         "all_reviews_count": Review.objects.filter(product=product).count(),
         "current_page": page_obj.number,
         "total_pages": paginator.num_pages,

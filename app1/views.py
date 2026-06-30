@@ -476,10 +476,20 @@ def search_product(request):
     return render(request, 'search.html', {'query': query,'page_obj': page_obj,'category': category,'selected_category': selected_category})
 def make_live_admin(request):
     try:
-        if not User.objects.filter(username='admin').exists():
-            User.objects.create_superuser('admin', 'admin@example.com', 'MyPassword123')
-            return HttpResponse("<h1>Mubarak ho! Admin User ban gaya hai.</h1>")
+        # Hum user ko dhoondenge agar wo pehle se hai
+        user = User.objects.filter(username='admin').first()
+        
+        if user:
+            # Agar user pehle se hai, toh uska password force-update karenge
+            user.set_password('MyPassword123')
+            user.is_superuser = True
+            user.is_staff = True
+            user.save()
+            return HttpResponse("<h1>Mubarak ho! Purane Admin ka password update ho gaya hai.</h1>")
         else:
-            return HttpResponse("<h1>Admin user pehle se hi maujood hai!</h1>")
+            # Agar bilkul nahi hai, toh naya bana denge
+            User.objects.create_superuser('admin', 'admin@example.com', 'MyPassword123')
+            return HttpResponse("<h1>Mubarak ho! Naya Admin User ban gaya hai.</h1>")
+            
     except Exception as e:
         return HttpResponse(f"<h1>Error: {e}</h1>")
