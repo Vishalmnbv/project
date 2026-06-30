@@ -1,0 +1,23 @@
+[
+{
+    "model": "app1.category",
+    "pk": 1,
+    "fields": {
+        "categoryname": "Shirt"
+    }
+},
+{
+    "model": "app1.category",
+    "pk": 2,
+    "fields": {
+        "categoryname": "Tshirt"
+    }
+},
+{
+    "model": "app1.category",
+    "pk": 3,
+    "fields": {
+        "categoryname": "Shoes"
+    }
+}
+]

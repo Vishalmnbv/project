@@ -1,0 +1,152 @@
+[
+{
+    "model": "app1.profile",
+    "pk": 1,
+    "fields": {
+        "user": 1,
+        "image": "profile_images/default_B649Bnc.png"
+    }
+},
+{
+    "model": "app1.profile",
+    "pk": 2,
+    "fields": {
+        "user": 2,
+        "image": "profile_images/item3.jpg"
+    }
+},
+{
+    "model": "app1.profile",
+    "pk": 3,
+    "fields": {
+        "user": 3,
+        "image": "profile_images/item4.jpg"
+    }
+},
+{
+    "model": "app1.profile",
+    "pk": 4,
+    "fields": {
+        "user": 4,
+        "image": "profile_images/default_q5vkZ3O.png"
+    }
+},
+{
+    "model": "app1.profile",
+    "pk": 5,
+    "fields": {
+        "user": 5,
+        "image": ""
+    }
+},
+{
+    "model": "app1.profile",
+    "pk": 6,
+    "fields": {
+        "user": 6,
+        "image": ""
+    }
+},
+{
+    "model": "app1.profile",
+    "pk": 7,
+    "fields": {
+        "user": 7,
+        "image": ""
+    }
+},
+{
+    "model": "app1.profile",
+    "pk": 8,
+    "fields": {
+        "user": 8,
+        "image": ""
+    }
+},
+{
+    "model": "app1.profile",
+    "pk": 9,
+    "fields": {
+        "user": 9,
+        "image": ""
+    }
+},
+{
+    "model": "app1.profile",
+    "pk": 10,
+    "fields": {
+        "user": 10,
+        "image": "profile_images/item3_MyhMsIW.jpg"
+    }
+},
+{
+    "model": "app1.profile",
+    "pk": 11,
+    "fields": {
+        "user": 11,
+        "image": ""
+    }
+},
+{
+    "model": "app1.category",
+    "pk": 1,
+    "fields": {
+        "categoryname": "Shirt"
+    }
+},
+{
+    "model": "app1.category",
+    "pk": 2,
+    "fields": {
+        "categoryname": "Tshirt"
+    }
+},
+{
+    "model": "app1.category",
+    "pk": 3,
+    "fields": {
+        "categoryname": "Shoes"
+    }
+},
+{
+    "model": "app1.productview",
+    "pk": 1,
+    "fields": {
+        "category_id": 1,
+        "productimage1": "https://m.media-amazon.com/images/I/61TTRV8-VkL._SY741_.jpg",
+        "productimage2": "https://m.media-amazon.com/images/I/51rlcoshu-L._SY741_.jpg",
+        "productimage3": "https://m.media-amazon.com/images/I/61106WobzUL._SY741_.jpg",
+        "productimage4": "https://m.media-amazon.com/images/I/51ByAuvcnBL._SY741_.jpg",
+        "productimage5": "https://m.media-amazon.com/images/I/71Wf8cYuytL._SY741_.jpg",
+        "productimage6": "https://m.media-amazon.com/images/S/aplus-media-library-service-media/830e02c6-5da8-4cc7-a5d5-2b93bd319a81.__CR0,0,970,600_PT0_SX970_V1___.png",
+        "productimage7": "https://m.media-amazon.com/images/S/aplus-media-library-service-media/fffdd7c4-0bf4-4e85-9345-c0a9fe27a270.__CR0,0,970,600_PT0_SX970_V1___.png",
+        "productimage8": "https://m.media-amazon.com/images/S/aplus-media-library-service-media/4a81a9cf-beaf-4bd9-a591-ba29197443a0.__CR0,0,970,600_PT0_SX970_V1___.png",
+        "productimage9": "https://m.media-amazon.com/images/S/aplus-media-library-service-media/5b5bc806-62dc-4ea8-b24f-7a5c8e8edf47.__CR0,0,970,600_PT0_SX970_V1___.png",
+        "productimage10": "https://m.media-amazon.com/images/S/aplus-media-library-service-media/70848ff5-89c2-4c98-a142-32fcfcf904c2.__CR0,0,970,600_PT0_SX970_V1___.png",
+        "productname": "Majestic Man",
+        "producttitle": "Majestic Man Men Classic Slim Fit Pure Cotton Casual Shirt",
+        "productprice": 498,
+        "productmrpprice": 1499,
+        "productdiscountrate": "67",
+        "productsize": "S",
+        "productsize1": "M",
+        "productsize2": "L",
+        "productsize3": "XL",
+        "productcolor1": "Wine",
+        "productcolor2": null,
+        "productcolor3": null,
+        "productcolor4": null,
+        "productcolor5": null,
+        "productrating": "4.0",
+        "producttophighlights1": "Material compositionPure Cotton",
+        "producttophighlights2": "PatternSolid",
+        "producttophighlights3": "Fit typeSlim Fit",
+        "producttophighlights4": "Sleeve typeLong Sleeve",
+        "producttophighlights5": "Collar styleClassic",
+        "producttophighlights6": "LengthStandard Length",
+        "productaboutitem1": "Fabric - Premium Cotton, Pre-Washed for extremely soft finish and No Shrinkage Post Washing",
+        "productaboutitem2": "Choose a shirt that is made of a high-quality cotton. This will ensure that the shirt is comfortable",
+        "productaboutitem3": "Style - Enhance your look by wearing this Casual Stylish Men's shirt, Team it with a pair of tapered",
+        "productaboutitem4": "Casual outings with friends or family,Work, if your workplace has a casual dress code,Daytime events",
+        "productaboutitem5": "This shirt has been designed keeping in mind the latest trends in a casual fashion or occassional fa",
+        "productitemdetail1": 
