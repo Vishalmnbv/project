@@ -39,8 +39,11 @@
                     {% if user.is_authenticated %}
                         <div class="nav-item dropdown me-2">
                             <button class="btn dropdown-toggle px-3 fs-6 fw-medium rounded-pill d-flex align-items-center text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if user.profile.image %}
+                                    <img src="{{ user.profile.image.url }}" class="rounded-circle border me-3" style="width:48px; height:48px; object-fit:cover;">
+                                {% else %}
                                     <img src="/static/IMG/default.png" class="rounded-circle border me-3" style="width:48px; height:48px; object-fit:cover;">
-                                
+                                {% endif %}
                                 <span class="text-white">{{ user.username }}</span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
