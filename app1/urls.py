@@ -2,9 +2,9 @@ from django.urls import path
 from .views import *
 from app1.views import make_live_admin
 urlpatterns = [
-    #path('',index,name='index'),
+    
     path('', HomeView.as_view(), name='index'),
-    path('register/', register, name='register'),
+    path('register/', RegisterView.as_view(), name='register'),
     path('login/',login,name='login'),
     path('logout/',logout,name='logout'),
     path('forgetpassword/',forgetpassword,name='forgetpassword'),

@@ -12,38 +12,27 @@ import json
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.generic import TemplateView
+from django.views import View
 # Create your views here.
-# def index(request):
-    #category = Category.objects.all()
-    #topproduct = Topproduct.objects.all()
-    #product_ids = request.session.get('recently_viewed', [])
-    #products = list(Productview.objects.filter(productviewid__in=product_ids))
-    #products.sort(key=lambda x: product_ids.index(x.productviewid))
-    #return render(request,'index.html',{'category':category,'products':products,'topproduct':topproduct})
 class HomeView(TemplateView):
     template_name = "index.html"
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         context["category"] = Category.objects.all()
         context["topproduct"] = Topproduct.objects.all()
-
         product_ids = self.request.session.get("recently_viewed", [])
-
         products = list(
             Productview.objects.filter(productviewid__in=product_ids)
         )
-
         products.sort(key=lambda x: product_ids.index(x.productviewid))
-
         context["products"] = products
-
         return context
-
-def register(request):
-    category = Category.objects.all()
-    if request.method == 'POST':
+class RegisterView(View):
+    def get(self, request):
+        category = Category.objects.all()
+        return render(request, 'register.html', {'category': category})
+    def post(self, request):
+        category = Category.objects.all()
         firstname = request.POST.get('firstname')
         lastname = request.POST.get('lastname')
         username = request.POST.get('username')
@@ -51,32 +40,31 @@ def register(request):
         password = request.POST.get('password')
         conformpassword = request.POST.get('conformpassword')
         image = request.FILES.get('image')
-        if password!=conformpassword:
-            messages.error(request,'Passwords do not match')
-            return redirect('/register/')
-        elif len(password)<8:
-            messages.error(request,'Password must be 8 Character length')
-            return redirect('/register/')
+        if password != conformpassword:
+            messages.error(request, 'Passwords do not match')
+            return redirect('register')
+        elif len(password) < 8:
+            messages.error(request, 'Password must be 8 Character length')
+            return redirect('register')
         elif User.objects.filter(username=username).exists():
-            messages.error(request,'Username already taken')
-            return redirect('/register/')
+            messages.error(request, 'Username already taken')
+            return redirect('register')
         elif User.objects.filter(email=email).exists():
-            messages.warning(request,'Email already taken')
-            return redirect('/register/')
+            messages.warning(request, 'Email already taken')
+            return redirect('register')
         user = User.objects.create_user(
-            first_name = firstname,
-            last_name = lastname,
-            username = username,
-            email = email,
-            password = password,
+            first_name=firstname,
+            last_name=lastname,
+            username=username,
+            email=email,
+            password=password,
         )
         Profile.objects.create(
-            user = user,
-            image = image,
+            user=user,
+            image=image,
         )
-        messages.success(request,'Account created successfully')
-        return redirect('/login/')
-    return render(request,'register.html',{'category':category})
+        messages.success(request, 'Account created successfully')
+        return redirect('login')
 def login(request):
     category = Category.objects.all()
     if request.method == 'POST':
