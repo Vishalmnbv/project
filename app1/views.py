@@ -65,25 +65,33 @@ class RegisterView(View):
         )
         messages.success(request, 'Account created successfully')
         return redirect('login')
-def login(request):
-    category = Category.objects.all()
-    if request.method == 'POST':
+class LoginView(View):
+    def get(self, request):
+        category = Category.objects.all()
+        return render(request, 'login.html', {'category': category})
+    def post(self, request):
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = auth.authenticate(request,username=username,password=password)
+        user = auth.authenticate(
+            request,
+            username=username,
+            password=password
+        )
         if user is not None:
             auth.login(request, user)
-            messages.success(request,f'Login successful,{username}')
-            return redirect('/')
-        else:
-            messages.error(request,'Invalid username or password')
-            return redirect('/login/')
-    return render(request,'login.html',{'category':category})
-def logout(request):
-    username = getattr(request.user,'username','User')
-    auth.logout(request)
-    messages.success(request,f'Successfully logged out,{username}')
-    return redirect('/login/')
+            messages.success(request, f'Login successful, {username}')
+            return redirect('index')
+        messages.error(request, 'Invalid username or password')
+        return redirect('login')
+class LogoutView(View):
+    def get(self, request):
+        username = getattr(request.user, 'username', 'User')
+        auth.logout(request)
+        messages.success(
+            request,
+            f'Successfully logged out, {username}'
+        )
+        return redirect('login')
 def forgetpassword(request):
     category = Category.objects.all()
     if request.method == 'POST':
