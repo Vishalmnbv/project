@@ -11,7 +11,7 @@ import math
 import json
 from django.conf import settings
 from django.http import HttpResponse
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView,ListView
 from django.views import View
 # Create your views here.
 class HomeView(TemplateView):
@@ -157,49 +157,69 @@ class EditProfileView(View):
                 'Username or Email already exists'
             )
             return redirect('editprofile')
-def collection(request,categoryid):
-    category = Category.objects.all()
-    categories = Category.objects.get(categoryid=categoryid)
-    productview = Productview.objects.filter(category_id=categoryid).order_by('-productviewid')
-    paginator = Paginator(productview,25)
-    page_number = request.GET.get('page')
-    try:
-        page_obj = paginator.get_page(page_number)
-    except PageNotAnInteger:
-        page_obj = paginator.page(1)
-    except EmptyPage:
-        page_obj = paginator.page(paginator.num_pages)
-    ratings_map = {
-        "Majestic Man Men Classic Slim Fit Pure Cotton Casual Shirt": 4.0,
-        "Majestic Man Comfort Slim Fit Pure Cotton Checked Casual Shirt": 4.1,
-        "Majestic Man Men’s Pure Cotton Striped Half Sleeve Regular Fit Shirt": 4.3,
-        "Lux Cozi Men’s Polo T‑Shirt  Comfortable Cotton Blend, Band Collar, Regular Fit  Stylish & Premium All Day Wear": 5.0,
-        "Louis Philippe Men's Slim Fit Single-Tuck Pique Stylized Sleeve Print and Contrast Tipping Half Sleeve Solid Polo Tshirt": 4.0,
-        "Kavora Men’s Solid Polo T-Shirt  Short Sleeve  Regular Fit Soft Breathable Fabric  Casual & Smart Wear  Button Placket Collar Top": 3.4,
-        "KAJARU Men's Polyster Blend Regular Fit T-Shirt with Half Sleeve Chain Polo Collar V-Neck Standard Length and Classic Style": 4.1,
-        "Bacca Bucci Men Lace Up Basketball Shoe": 4.2,
-        "Bacca Bucci Men Lace Up Sneaker Shoes": 4.2,
-        "Bacca Bucci Men Lace Up Running Shoes": 3.8,
-        "Bacca Bucci Men Lace Up Athletic Shoes": 3.9,
-    }
-    for product in page_obj:
-        raw_rating = ratings_map.get(product.producttitle.strip(), 5.0)
-        product.rating = raw_rating
-        full_stars = math.floor(raw_rating)
-        has_half_star = 1 if (0.3 <= (raw_rating - full_stars) <= 0.7) else 0
-        if (raw_rating - full_stars) >= 0.8:
-            full_stars += 1
-            has_half_star = 0
-        empty_stars = 5 - full_stars - has_half_star
-        product.full_stars_range = range(full_stars)
-        product.half_stars_range = range(has_half_star)
-        product.empty_stars_range = range(max(0, empty_stars))
-        if product.productmrpprice and product.productprice and product.productmrpprice > product.productprice:
-            discount = ((product.productmrpprice - product.productprice) / product.productmrpprice) * 100
-            product.productdiscountrate = str(int(discount)) 
-        else:
-            product.productdiscountrate = "0"
-    return render(request,'collection.html',{'category':category,'categories':categories,'page_obj':page_obj})
+class CollectionView(ListView):
+    model = Productview
+    template_name = "collection.html"
+    context_object_name = "page_obj"
+    paginate_by = 25
+    def get_queryset(self):
+        categoryid = self.kwargs["categoryid"]
+        return Productview.objects.filter(
+            category_id=categoryid
+        ).order_by("-productviewid")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        categoryid = self.kwargs["categoryid"]
+        context["category"] = Category.objects.all()
+        context["categories"] = Category.objects.get(
+            categoryid=categoryid
+        )
+        ratings_map = {
+            "Majestic Man Men Classic Slim Fit Pure Cotton Casual Shirt": 4.0,
+            "Majestic Man Comfort Slim Fit Pure Cotton Checked Casual Shirt": 4.1,
+            "Majestic Man Men’s Pure Cotton Striped Half Sleeve Regular Fit Shirt": 4.3,
+            "Lux Cozi Men’s Polo T-Shirt  Comfortable Cotton Blend, Band Collar, Regular Fit  Stylish & Premium All Day Wear": 5.0,
+            "Louis Philippe Men's Slim Fit Single-Tuck Pique Stylized Sleeve Print and Contrast Tipping Half Sleeve Solid Polo Tshirt": 4.0,
+            "Kavora Men’s Solid Polo T-Shirt  Short Sleeve  Regular Fit Soft Breathable Fabric  Casual & Smart Wear  Button Placket Collar Top": 3.4,
+            "KAJARU Men's Polyster Blend Regular Fit T-Shirt with Half Sleeve Chain Polo Collar V-Neck Standard Length and Classic Style": 4.1,
+            "Bacca Bucci Men Lace Up Basketball Shoe": 4.2,
+            "Bacca Bucci Men Lace Up Sneaker Shoes": 4.2,
+            "Bacca Bucci Men Lace Up Running Shoes": 3.8,
+            "Bacca Bucci Men Lace Up Athletic Shoes": 3.9,
+        }
+        for product in context["page_obj"]:
+            raw_rating = ratings_map.get(
+                product.producttitle.strip(),
+                5.0
+            )
+            product.rating = raw_rating
+            full_stars = math.floor(raw_rating)
+            has_half_star = (
+                1 if 0.3 <= (raw_rating - full_stars) <= 0.7 else 0
+            )
+            if (raw_rating - full_stars) >= 0.8:
+                full_stars += 1
+                has_half_star = 0
+            empty_stars = 5 - full_stars - has_half_star
+            product.full_stars_range = range(full_stars)
+            product.half_stars_range = range(has_half_star)
+            product.empty_stars_range = range(max(0, empty_stars))
+            if (
+                product.productmrpprice
+                and product.productprice
+                and product.productmrpprice > product.productprice
+            ):
+                discount = (
+                    (
+                        product.productmrpprice
+                        - product.productprice
+                    )
+                    / product.productmrpprice
+                ) * 100
+                product.productdiscountrate = str(int(discount))
+            else:
+                product.productdiscountrate = "0"
+        return context
 def productview(request,categoryid,productviewid):
     category = Category.objects.all()
     categories = Category.objects.get(categoryid=categoryid)
