@@ -227,22 +227,16 @@ def productview(request,categoryid,productviewid):
     else:
             productview.productdiscountrate = "0"
     if request.method == "POST":
-        rating = request.POST.get('rating')
-        review_text = request.POST.get('review')
-        image = request.FILES.get('image')
-        size = request.POST.get('size')
-        color = request.POST.get('color')
-        country = request.POST.get('country')
         Review.objects.create(
-            user=request.user,
+            user=request.user if request.user.is_authenticated else None,
             product=productview,
-            rating=rating,
-            review=review_text,
-            image=image,
-            size=size,
-            color=color,
-            country=country,
-        )
+            rating=request.POST.get("rating"),
+            review=request.POST.get("review"),
+            image=request.FILES.get("image"),
+            size=request.POST.get("size"),
+            color=request.POST.get("color"),
+            country=request.POST.get("country"),
+            )
         messages.success(request, f'Review added successfully by {request.user.username}')
         return redirect(request.path)
     reviews = Review.objects.filter(product=productview).order_by("-created_at")[:7]

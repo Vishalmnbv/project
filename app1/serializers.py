@@ -39,12 +39,18 @@ class UserSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
 
         try:
-            if obj.profile.image:
-                return request.build_absolute_uri(obj.profile.image.url)
-        except Profile.DoesNotExist:
-            return None
+            image = obj.profile.image
+
+            if image:
+                if request:
+                    return request.build_absolute_uri(image.url)
+                return image.url
+
+        except Exception:
+            pass
 
         return None
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -66,7 +72,7 @@ class ProductReactionSerializer(serializers.ModelSerializer):
         model = ProductReaction
         fields = '__all__'
 class ReviewSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    user = serializers.SerializerMethodField()
 
     class Meta:
         model = Review
@@ -82,6 +88,12 @@ class ReviewSerializer(serializers.ModelSerializer):
             "color",
             "country",
         ]
+
+    def get_user(self, obj):
+        return UserSerializer(
+            obj.user,
+            context=self.context
+        ).data if obj.user else None
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = cart

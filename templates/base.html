@@ -42,7 +42,7 @@
                                 {% if user.profile.image %}
                                     <img src="{{ user.profile.image.url }}" style="width:30px; height:30px; object-fit: cover;" class="rounded-pill me-2">
                                 {% else %}
-                                    <img src="/static/IMG/default.png" style="width:30px; height:30px;" class="rounded-pill me-2">
+                                    <img src="{% static 'IMG/default.png' %}" style="width:30px; height:30px;" class="rounded-pill me-2">
                                 {% endif %}
                                 <span class="text-white">{{ user.username }}</span>
                             </button>
