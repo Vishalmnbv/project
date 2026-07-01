@@ -160,7 +160,7 @@ class EditProfileView(View):
 class CollectionView(ListView):
     model = Productview
     template_name = "collection.html"
-    context_object_name = "page_obj"
+    context_object_name = "products"
     paginate_by = 25
     def get_queryset(self):
         categoryid = self.kwargs["categoryid"]
