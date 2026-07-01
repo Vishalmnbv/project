@@ -31,7 +31,7 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 else:
-    # path ની જગ્યાએ re_path કરી દીધું જેથી લાઈવ સર્વર પર ઈમેજ લોડ થાય
+    # Render (Live Server) માટે આ સૌથી સેફ રીત છે:
     urlpatterns += [
         re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
         re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
