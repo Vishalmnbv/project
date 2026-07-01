@@ -92,33 +92,50 @@ class LogoutView(View):
             f'Successfully logged out, {username}'
         )
         return redirect('login')
-def forgetpassword(request):
-    category = Category.objects.all()
-    if request.method == 'POST':
+class ForgetPasswordView(View):
+    def get(self, request):
+        category = Category.objects.all()
+        return render(request, 'forgetpassword.html', {
+            'category': category
+        })
+    def post(self, request):
         email = request.POST.get('email')
         newpassword = request.POST.get('newpassword')
         confirmpassword = request.POST.get('confirmpassword')
         if newpassword != confirmpassword:
             messages.error(request, "Passwords do not match!")
-            return render(request, 'forgetpassword.html',{'email_val': email})
-        elif len(newpassword)<8:
-            messages.error(request,'Password must be 8 Character length')
-            return redirect('/forgetpassword/')
+            return render(
+                request,
+                'forgetpassword.html',
+                {'email_val': email}
+            )
+        if len(newpassword) < 8:
+            messages.error(request, 'Password must be 8 Character length')
+            return redirect('forgetpassword')
         user = User.objects.filter(email=email).first()
         if user:
             user.set_password(newpassword)
             user.save()
-            messages.success(request, "Password reset successful! Please login.")
-            return redirect('/login/')
-        else:
-            messages.error(request,"No account found with this email.")
-            return redirect('/forgetpassword/')
-    return render(request,'forgetpassword.html',{'category':category})
-def editprofile(request):
-    category = Category.objects.all()
-    user = request.user
-    profile, created = Profile.objects.get_or_create(user=user)
-    if request.method == "POST":
+            messages.success(
+                request,
+                "Password reset successful! Please login."
+            )
+            return redirect('login')
+        messages.error(request, "No account found with this email.")
+        return redirect('forgetpassword')
+class EditProfileView(View):
+    def get(self, request):
+        category = Category.objects.all()
+        return render(
+            request,
+            'editprofile.html',
+            {
+                'category': category
+            }
+        )
+    def post(self, request):
+        user = request.user
+        profile, created = Profile.objects.get_or_create(user=user)
         user.first_name = request.POST.get('firstname')
         user.last_name = request.POST.get('lastname')
         user.username = request.POST.get('username')
@@ -126,15 +143,20 @@ def editprofile(request):
         uploaded_image = request.FILES.get('profile_image')
         try:
             user.save()
-            if uploaded_image:  
+            if uploaded_image:
                 profile.image = uploaded_image
             profile.save()
-            messages.success(request,'Profile updated successfully!')
-            return redirect('/')
-        except Exception as e:
-            messages.error(request,'Username or Email already exists')
-            return redirect('/editprofile/')
-    return render(request,'editprofile.html',{'category':category})
+            messages.success(
+                request,
+                'Profile updated successfully!'
+            )
+            return redirect('index')
+        except Exception:
+            messages.error(
+                request,
+                'Username or Email already exists'
+            )
+            return redirect('editprofile')
 def collection(request,categoryid):
     category = Category.objects.all()
     categories = Category.objects.get(categoryid=categoryid)
